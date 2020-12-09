@@ -21,7 +21,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FormReporte911"></activity>
+        <activity android:name=".AlertaAmber"></activity>
+        <activity android:name=".VigilanciaVecinal" />
+        <activity android:name=".AltoALaViolencia" />
+        <activity android:name=".TransporteSeguro" />
+        <activity android:name=".FormReporte911" />
         <activity android:name=".ConfiguracionesAgitado" />
         <activity android:name=".FormRegistroUsuario" />
         <activity android:name=".FormAddTelefono" />
@@ -36,6 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAV0GF93ZYt4Iw93lho2yAXKDiK4I0kGIo" />
