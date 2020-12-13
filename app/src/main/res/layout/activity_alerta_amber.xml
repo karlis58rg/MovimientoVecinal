@@ -95,30 +95,32 @@
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:hint="Nombre:"
+                    android:textAllCaps="true"
                     android:layout_marginTop="30dp"
                     android:layout_marginLeft="40dp"
+                    android:maxLength="30"
                     android:layout_below="@id/pickFoto"/>
 
                 <EditText
                     android:id="@+id/txtApaternoAlerta"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPersonName"
                     android:hint="A. paterno:"
                     android:layout_below="@id/txtNombreAlerta"
                     android:layout_marginTop="15dp"
-                    android:layout_marginLeft="40dp"/>
+                    android:layout_marginLeft="40dp"
+                    android:textAllCaps="true"
+                    android:maxLength="30"/>
                 <EditText
                     android:id="@+id/txtAmaternoAlerta"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPersonName"
                     android:hint="A. materno:"
                     android:layout_below="@id/txtApaternoAlerta"
                     android:layout_marginTop="15dp"
-                    android:layout_marginLeft="40dp"/>
+                    android:layout_marginLeft="40dp"
+                    android:textAllCaps="true"
+                    android:maxLength="30"/>
                 <TextView
                     android:id="@+id/lblSexo"
                     android:layout_width="wrap_content"
@@ -152,7 +154,8 @@
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="textPersonName"
+                    android:inputType="number"
+                    android:maxLength="2"
                     android:hint="Edad:"
                     android:layout_below="@id/lblSexo"
                     android:layout_marginTop="15dp"
@@ -162,14 +165,99 @@
                     android:id="@+id/txtNacionalidad"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPersonName"
                     android:hint="Nacionalidad:"
+                    android:textAllCaps="true"
                     android:layout_below="@id/txtEdad"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="40dp"
+                    android:maxLength="15"/>
+
+                <EditText
+                    android:id="@+id/txtColorOjos"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Color de ojos:"
+                    android:textAllCaps="true"
+                    android:layout_below="@id/txtNacionalidad"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="40dp"
+                    android:maxLength="20"/>
+
+                <EditText
+                    android:id="@+id/txtEstatura"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:hint="Estatura:"
+                    android:layout_below="@id/txtColorOjos"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="40dp"
+                    android:maxLength="5"/>
+
+                <EditText
+                    android:id="@+id/txtComplexion"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Complexión:"
+                    android:textAllCaps="true"
+                    android:layout_below="@id/txtEstatura"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="40dp"
+                    android:maxLength="30"/>
+
+                <EditText
+                    android:id="@+id/txtFechaNacimiento"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Fecha de nacimiento:"
+                    android:layout_below="@id/txtComplexion"
                     android:layout_marginTop="15dp"
                     android:layout_marginLeft="40dp"/>
 
+                <EditText
+                    android:id="@+id/txtFechaHechos"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Fecha de los hechos:"
+                    android:layout_below="@id/txtFechaNacimiento"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="40dp"/>
 
+                <EditText
+                    android:id="@+id/txtLugarHechos"
+                    android:layout_width="250dp"
+                    android:layout_height="80dp"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:textAllCaps="true"
+                    android:hint="Lugar de los hechos:"
+                    android:layout_below="@id/txtFechaHechos"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="40dp"/>
+
+                <EditText
+                    android:id="@+id/txtDescripcionHechos"
+                    android:layout_width="250dp"
+                    android:layout_height="80dp"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:textAllCaps="true"
+                    android:hint="Descripción de los hechos:"
+                    android:layout_below="@id/txtLugarHechos"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="40dp"/>
+
+                <Button
+                    android:id="@+id/btnEnviarAlertaAmber"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="Enviar Alerta"
+                    android:layout_marginTop="50dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/btn_redondo"
+                    android:layout_below="@id/txtDescripcionHechos"
+                    android:layout_marginBottom="50dp"/>
 
 
             </RelativeLayout>
