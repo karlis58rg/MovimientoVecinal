@@ -16,6 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -27,7 +30,7 @@ import okhttp3.Response;
 public class FormAddTelefono extends AppCompatActivity {
     Button btnEnviar;
     EditText txtNumeroUsuario;
-    String numero;
+    String numero,respuestaJson,m_Item1,nombreV,aPaternoV,aMaternoV,direccionV,nuc,idVictima;
     SharedPreferences share;
     SharedPreferences.Editor editor;
 
@@ -58,10 +61,9 @@ public class FormAddTelefono extends AppCompatActivity {
     /******************GET A LA BD***********************************/
     public void getUser() {
         numero = txtNumeroUsuario.getText().toString();
-
         final OkHttpClient client = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url("http://187.174.102.142/AppMovimientoVecinal/api/UsuarioRegistrado?telefono=" + numero)
+                .url("http://187.174.102.142/AppMovimientoVecinal/api/UsuarioRegistrado?telefono="+numero)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -75,30 +77,67 @@ public class FormAddTelefono extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String myResponse = response.body().string();
-                    myResponse = myResponse.replace('"',' ');
-                    myResponse = myResponse.trim();
-                    String resp = myResponse;
-                    String valorUser = "false";
-                    if(resp.equals(valorUser)){
-                        Looper.prepare(); // to be able to make toast
-                        Toast.makeText(getApplicationContext(), "LO SENTIMOS, CONTRASEÑA INCORRECTA", Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }else{
-                       /* banderaLogin = 2;
-                        respPass = resp;
-                        Looper.prepare(); // to be able to make toast
-                        guardarDatosUserLogin();
-                        Intent i = new Intent(LoginUser.this,Reglamento.class);
-                        startActivity(i);
-                        finish();
-                        Looper.loop();*/
-                    }
-                    Log.i("HERE", resp);
+                    final String myResponse = response.body().string();
+                    FormAddTelefono.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject jObj = null;
+                                String resObj = myResponse;
+                                System.out.println(resObj);
+                                jObj = new JSONObject("" + resObj + "");
+                                respuestaJson = jObj.getString("m_Item1");
+                                m_Item1 = "SIN INFORMACION";
+                                if (respuestaJson.equals(m_Item1)) {
+                                    guardarNumeroUser();
+                                    Toast.makeText(getApplicationContext(), "LO SENTIMOS, NO SE CUENTA CON INFORMACIÓN DE ESTE NÚMERO TELEFÓNICO", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(FormAddTelefono.this, FormRegistroUsuario.class);
+                                    startActivity(i);
+                                    finish();
+                                } else {
+                                    nombreV = jObj.getString("m_Item1");
+                                    aPaternoV = jObj.getString("m_Item2");
+                                    aMaternoV = jObj.getString("m_Item3");
+                                    direccionV = jObj.getString("m_Item4");
+                                    nuc = jObj.getString("m_Item5");
+                                    idVictima = jObj.getString("m_Item6");
+                                    guardarDatosUser();
+                                    Intent i = new Intent(FormAddTelefono.this, FormRegistroUsuario.class);
+                                    startActivity(i);
+                                    finish();
+                                    Log.i("HERE", "" + jObj);
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
                 }
             }
 
         });
+    }
+
+    private void guardarNumeroUser(){
+        share = getSharedPreferences("main",MODE_PRIVATE);
+        editor = share.edit();
+        editor.putString("TELEFONO",numero);
+        editor.commit();
+    }
+
+    private void guardarDatosUser(){
+        share = getSharedPreferences("main",MODE_PRIVATE);
+        editor = share.edit();
+        editor.putString("TELEFONO",numero);
+        editor.putString("NOMBRE",nombreV);
+        editor.putString("APATERNO",aPaternoV);
+        editor.putString("AMATERNO",aMaternoV);
+        editor.putString("DIRECCION",direccionV);
+        editor.putString("NUC",nuc);
+        editor.putString("IDVICTIMA",idVictima);
+        editor.commit();
     }
 
     //***************************** SE OPTIENEN TODOS LOS PERMISOS AL INICIAR LA APLICACIÓN *********************************//
