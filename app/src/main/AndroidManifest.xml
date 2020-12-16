@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="mx.oax.movimientovecinal">
 
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -24,15 +25,16 @@
         android:usesCleartextTraffic="true">
         <service
             android:name=".ServiceShake.Service911"
-            android:enabled="false"
-            android:exported="false"></service>
+            android:enabled="true"
+            android:exported="true"></service>
 
         <activity android:name=".AlertaAmber" />
         <activity android:name=".VigilanciaVecinal" />
         <activity android:name=".AltoALaViolencia" />
         <activity android:name=".TransporteSeguro" />
         <activity android:name=".FormReporte911" />
-        <activity android:name=".ConfiguracionesAgitado" />
+        <activity android:name=".ConfiguracionesAgitado">
+        </activity>
         <activity android:name=".FormRegistroUsuario" />
         <activity android:name=".FormAddTelefono" />
         <activity

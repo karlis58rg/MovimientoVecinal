@@ -115,7 +115,9 @@
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
-                        android:hint="Ejemplo: H1212B"/>
+                        android:hint="Ejemplo: H1212B"
+                        android:inputType="textCapCharacters"
+                        android:maxLength="8"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -187,8 +189,7 @@
                     android:id="@+id/lyDetenerServicio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:layout_below="@id/lyEncasoDe"
+                    android:layout_marginTop="300dp"
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="wrap_content"

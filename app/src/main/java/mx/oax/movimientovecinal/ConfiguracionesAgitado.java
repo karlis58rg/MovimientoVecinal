@@ -3,7 +3,9 @@ package mx.oax.movimientovecinal;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import mx.oax.movimientovecinal.ServiceShake.Service911;
 
@@ -22,7 +25,9 @@ public class ConfiguracionesAgitado extends AppCompatActivity {
     public static int versionSDK;
     public static int valorShake = 0;
     String valShake = "";
-    String cargarInfoServicio = "";
+    String cargarInfoServicio;
+    int cargarInfoBandera;
+    AlertDialog alert = null;
     SharedPreferences share;
     SharedPreferences.Editor editor;
 
@@ -56,18 +61,27 @@ public class ConfiguracionesAgitado extends AppCompatActivity {
         btnConfigurar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"SACUDA SU TELÉFONO",Toast.LENGTH_LONG).show();
                 cargarServicio();
-                if(cargarInfoServicio != null){
-                    valShake = txtValorShake.getText().toString();
-                    valorShake = Integer.parseInt(valShake);
-                    System.out.println(valorShake + "YA CON SERVICIO INICIADO");
-                    guardar();
-                }else{
+                if(cargarInfoServicio == null){
                     valShake = txtValorShake.getText().toString();
                     valorShake = Integer.parseInt(valShake);
                     guardar();
                     startService( new Intent( ConfiguracionesAgitado.this, Service911.class));
                     System.out.println(valorShake + "SERVICIO");
+                }else{
+                    if(cargarInfoBandera == 1){
+                        valShake = txtValorShake.getText().toString();
+                        valorShake = Integer.parseInt(valShake);
+                        System.out.println(valorShake + "YA CON SERVICIO INICIADO");
+                        guardar();
+                    }else{
+                        valShake = txtValorShake.getText().toString();
+                        valorShake = Integer.parseInt(valShake);
+                        guardar();
+                        startService( new Intent( ConfiguracionesAgitado.this, Service911.class));
+                        System.out.println(valorShake + "SERVICIO");
+                    }
                 }
             }
         });
@@ -75,17 +89,39 @@ public class ConfiguracionesAgitado extends AppCompatActivity {
         btnValorShake.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isMyServiceRunning( mSensorService.getClass())) {
-                    stopService( mServiceIntent );
-                    stopService( new Intent( ConfiguracionesAgitado.this, Service911.class ) );
-                    onDestroy();
-                    Intent intent = new Intent( ConfiguracionesAgitado.this, MenuEventos.class );
-                    startActivity( intent );
-                    finish();
-                }
+                final AlertDialog.Builder builder = new AlertDialog.Builder(ConfiguracionesAgitado.this);
+                builder.setMessage("EL VALOR DE SU SACUDIDA ESTA POR SER ESTABLECIDO")
+                        .setCancelable(false)
+                        .setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if(isMyServiceRunning( mSensorService.getClass())) {
+                                    stopService( new Intent( ConfiguracionesAgitado.this, Service911.class ) );
+                                    onStop();
+                                    onDestroy();
+                                    Log.i("HEY", "CON SERVICIO DETENIDO");
+                                    if(isMyServiceRunning( mSensorService.getClass())) {
+                                    }
+                                    eliminarServicio();
+                                    Intent intentMenu = new Intent( ConfiguracionesAgitado.this, MenuEventos.class );
+                                    startActivity( intentMenu);
+                                    System.exit(0);
+                                }
+                            }
+                        })
+                        .setNegativeButton("NO, VOLVER A CONFIGURAR VALOR ", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                alert = builder.create();
+                alert.show();
             }
         });
     }
+
+
 
     //******************************** METODOS DEL SERVICIO ****************************************//
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -106,6 +142,12 @@ public class ConfiguracionesAgitado extends AppCompatActivity {
         Log.i("MAINACT", "onDestroy!");
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("MAINACT", "onStop!");
+    }
+
     //**********************************************************************//
     private void guardar(){
         share = getSharedPreferences("main",MODE_PRIVATE);
@@ -114,8 +156,18 @@ public class ConfiguracionesAgitado extends AppCompatActivity {
         editor.putString( "sdk", String.valueOf( versionSDK ));
         editor.apply();
     }
+
     private void cargarServicio(){
         share = getSharedPreferences("main",MODE_PRIVATE);
         cargarInfoServicio = share.getString("servicio",null);
+        cargarInfoBandera = share.getInt("bandera",0);
     }
+
+    private void eliminarServicio(){
+        share = getSharedPreferences("main",MODE_PRIVATE);
+        editor = share.edit();
+        editor.remove("bandera").commit();
+        //Toast.makeText(getApplicationContext(),"Dato Eliminado",Toast.LENGTH_LONG).show();
+    }
+
 }

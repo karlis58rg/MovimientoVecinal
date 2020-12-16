@@ -149,24 +149,24 @@
                         android:id="@+id/imgImagen"
                         android:layout_width="90dp"
                         android:layout_height="80dp"
-                        android:scaleX="0.9"
-                        android:scaleY="0.8"
+                        android:scaleX="0.5"
+                        android:scaleY="0.4"
                         android:background="@drawable/ic_camara"/>
                     <ImageView
                         android:id="@+id/imgAudio"
                         android:layout_width="90dp"
                         android:layout_height="80dp"
                         android:layout_marginLeft="15dp"
-                        android:scaleX="0.7"
-                        android:scaleY="0.9"
+                        android:scaleX="0.4"
+                        android:scaleY="0.5"
                         android:background="@drawable/ic_audio"/>
                     <ImageView
                         android:id="@+id/imgVideo"
                         android:layout_width="90dp"
                         android:layout_height="80dp"
                         android:layout_marginLeft="15dp"
-                        android:scaleX="0.85"
-                        android:scaleY="0.9"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
                         android:background="@drawable/ic_video"/>
                 </LinearLayout>
 

@@ -26,13 +26,14 @@ import mx.oax.movimientovecinal.ConfiguracionesAgitado;
 import mx.oax.movimientovecinal.R;
 
 import static mx.oax.movimientovecinal.Shake.App.CHANNEL_ID;
+
 public class Service911 extends Service implements SensorEventListener {
     public Service911(Context applicationContext) {
         super();
         Log.i("HERE", "HERE I AM!");
     }
 
-    MyTask2 miTareaSuper;
+    public static MyTask2 miTareaSuper;
     public SensorManager mSensorManager;
     public Sensor mAccelerometer;
     public float mAccel; // acceleration apart from gravity
@@ -45,6 +46,7 @@ public class Service911 extends Service implements SensorEventListener {
     public String cargarInfoSDK;
     public int cargarInfoValorShake = 0;
     public String serbar = "sincrear";
+    int bandera = 0;
 
     SharedPreferences shared;
     SharedPreferences.Editor editor;
@@ -126,6 +128,7 @@ public class Service911 extends Service implements SensorEventListener {
 
         @Override
         protected void onProgressUpdate(String... values) {
+            bandera = 1;
             Log.i("HERE","ACTUALIZANDO EVENTO");
             serbar = "creado";
             Log.i("HERE",serbar);
@@ -194,6 +197,7 @@ public class Service911 extends Service implements SensorEventListener {
         shared = getSharedPreferences("main",MODE_PRIVATE);
         editor = shared.edit();
         editor.putString("servicio",serbar);
+        editor.putInt("bandera",bandera);
         editor.apply();
     }
 

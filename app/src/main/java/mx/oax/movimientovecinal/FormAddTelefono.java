@@ -51,6 +51,7 @@ public class FormAddTelefono extends AppCompatActivity {
                 }else if(txtNumeroUsuario.getText().length() < 10){
                     Toast.makeText(getApplicationContext(),"LO SENTIMOS SU NÚMERO TELEFÓNICO NO PUEDE SER MENOR A 10 DIGITOS",Toast.LENGTH_SHORT).show();
                 }else{
+                    Toast.makeText(getApplicationContext(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
                     getUser();
                 }
 

@@ -128,7 +128,8 @@
                     android:layout_gravity="left"
                     android:layout_marginTop="25dp"
                     android:layout_marginLeft="30dp"
-                    android:background="@drawable/ic_911"/>
+                    android:scaleY="0.8"
+                    android:background="@drawable/ic_alerta_amber"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
