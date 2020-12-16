@@ -192,7 +192,6 @@ public class FormRegistroUsuario extends AppCompatActivity {
             }
         });
     }
-
     public void updateUserRegistrado(){
         noConfianza = txtNoConfianza.getText().toString();
         OkHttpClient client = new OkHttpClient();
@@ -235,7 +234,6 @@ public class FormRegistroUsuario extends AppCompatActivity {
             }
         });
     }
-
     //********************************** SE CONVIERTE LA IMAGEN A BASE64 ***********************************//
     private void llamarItemAvatar() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -243,7 +241,6 @@ public class FormRegistroUsuario extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
@@ -258,7 +255,6 @@ public class FormRegistroUsuario extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
     private void imagen2() {
         avatar2.buildDrawingCache();
         Bitmap bitmap = avatar2.getDrawingCache();
@@ -306,7 +302,7 @@ public class FormRegistroUsuario extends AppCompatActivity {
             }
         });
     }
-
+    //*********************************************************************//
     public void cargarDatos() {
         share = getApplication().getSharedPreferences("main", Context.MODE_PRIVATE);
         cargarInfoTelefono = share.getString("TELEFONO", "");
@@ -316,9 +312,7 @@ public class FormRegistroUsuario extends AppCompatActivity {
         cargarInfoDireccion = share.getString("DIRECCION", "");
         cargarInfoNuc = share.getString("NUC", "");
         cargarInfoIdVictima = share.getString("IDVICTIMA", "");
-
     }
-
     //***************************** SE OPTIENEN TODOS LOS PERMISOS AL INICIAR LA APLICACIÓN *********************************//
     public void solicitarPermisosCamera() {
         if (ContextCompat.checkSelfPermission(FormRegistroUsuario.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(FormRegistroUsuario.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
