@@ -94,17 +94,10 @@
                 <LinearLayout
                     android:id="@+id/lyEmergencia"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_height="90dp"
+                    android:gravity="center"
                     android:background="@drawable/drawable_pressed"
                     android:layout_below="@id/tv_miadres">
-                    <ImageView
-                        android:layout_width="110dp"
-                        android:layout_height="100dp"
-                        android:layout_gravity="left"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginLeft="30dp"
-                        android:background="@drawable/ic_911"/>
 
                     <EditText
                         android:id="@+id/txtEmergencia"
@@ -121,51 +114,84 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/lyDiscapacidadOpcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:background="@drawable/drawable_pressed"
+                    android:layout_below="@id/lyEmergencia"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18dp"
+                        android:text="Persona con discapacidad"/>
+                    <TextView
+                        android:id="@+id/lblPerDiscNo"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="NO"
+                        android:textAlignment="center"
+                        android:textSize="15sp" />
+                    <Switch
+                        android:id="@+id/switchDiscapacidad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/lblPerDiscSI"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="SÍ"
+                        android:textAlignment="center"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/lyReporte"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/drawable_pressed"
-                    android:layout_below="@id/lyEmergencia"
+                    android:layout_below="@id/lyDiscapacidadOpcion"
                     android:orientation="vertical">
                     <TextView
-                        android:layout_width="300dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="18dp"
                         android:textAlignment="center"
-                        android:layout_gravity="center"
-                        android:text="En caso de necesitarlo, selecciona el tipo de archivo que deseas incluir en tu reporte o continua con tu emergencia"/>
+                        android:text="Selecciona el tipo de archivo que desea incluir en su reporte al 911"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/lyMultimedia"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/drawable_pressed"
                     android:layout_below="@id/lyReporte"
                     android:gravity="center_horizontal">
                     <ImageView
                         android:id="@+id/imgImagen"
                         android:layout_width="90dp"
-                        android:layout_height="80dp"
-                        android:scaleX="0.5"
+                        android:layout_height="70dp"
+                        android:scaleX="0.4"
                         android:scaleY="0.4"
                         android:background="@drawable/ic_camara"/>
                     <ImageView
                         android:id="@+id/imgAudio"
                         android:layout_width="90dp"
-                        android:layout_height="80dp"
+                        android:layout_height="70dp"
                         android:layout_marginLeft="15dp"
-                        android:scaleX="0.4"
+                        android:scaleX="0.3"
                         android:scaleY="0.5"
                         android:background="@drawable/ic_audio"/>
                     <ImageView
                         android:id="@+id/imgVideo"
                         android:layout_width="90dp"
-                        android:layout_height="80dp"
+                        android:layout_height="70dp"
                         android:layout_marginLeft="15dp"
-                        android:scaleX="0.5"
+                        android:scaleX="0.4"
                         android:scaleY="0.5"
                         android:background="@drawable/ic_video"/>
                 </LinearLayout>
@@ -173,11 +199,11 @@
                 <LinearLayout
                     android:id="@+id/lyEnviarEmergencia"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
-                    android:background="@drawable/drawable_pressed"
+                    android:layout_height="60dp"
                     android:layout_below="@id/lyMultimedia"
+                    android:layout_marginTop="10dp"
                     android:gravity="center_horizontal">
+
                     <Button
                         android:id="@+id/btnEnviarEmergencia"
                         android:layout_width="wrap_content"
@@ -227,8 +253,41 @@
                         android:id="@+id/timer"
                         android:layout_width="200dp"
                         android:layout_height="wrap_content"
-                        android:textSize="40sp"
+                        android:textSize="35sp"
                         android:textAlignment="center"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lyAudio"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/drawable_pressed"
+                    android:layout_below="@id/lyCronometro"
+                    android:gravity="center_horizontal">
+                    <ImageView
+                        android:id="@+id/imgGrabar"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:scaleX="0.8"
+                        android:scaleY="0.9"
+                        android:background="@drawable/ic_grabar"/>
+                    <ImageView
+                        android:id="@+id/imgDetener"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="5dp"
+                        android:scaleX="0.8"
+                        android:scaleY="0.9"
+                        android:background="@drawable/ic_pausa"/>
+                    <ImageView
+                        android:id="@+id/imgReproducir"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="5dp"
+                        android:scaleX="0.8"
+                        android:scaleY="0.9"
+                        android:background="@drawable/ic_reproducir"/>
                 </LinearLayout>
 
             </RelativeLayout>

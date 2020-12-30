@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#acacac</color>
     <color name="colorAccent">#FFB700</color>
     <color name="colorBorder">#009E90</color>
-    <color name="colorHome">#FFFFFF</color>
+    <color name="colorHome">#acacac</color>
     <color name="colorAddress">#791B7A</color>
     <color name="colorTxtPlaca">#FF000B</color>
 </resources>

@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import mx.oax.movimientovecinal.ServiceShake.Service911;
 
 public class VigilanciaVecinal extends AppCompatActivity {
-    ImageView btnVigilancia;
+    ImageView home,btnVigilancia;
     AlertDialog alert = null;
 
     @Override
@@ -21,7 +21,17 @@ public class VigilanciaVecinal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vigilancia_vecinal);
 
+        home = findViewById(R.id.imgHomeVigilancia);
         btnVigilancia = findViewById(R.id.btnVigilancia);
+
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(VigilanciaVecinal.this,MenuEventos.class);
+                startActivity(i);
+                finish();
+            }
+        });
 
         btnVigilancia.setOnClickListener(new View.OnClickListener() {
             @Override

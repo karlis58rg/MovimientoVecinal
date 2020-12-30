@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,8 +15,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -39,17 +43,19 @@ public class AlertaAmber extends AppCompatActivity {
     RadioGroup rgSexo;
     Button btnEnviarAlertaAmber;
     AlertDialog alert = null;
-    ImageView pickFotoAvatar;
+    ImageView home,pickFotoAvatar;
     CircleImageView avatar2;
     int banderaFoto = 0;
-    String nombreAlerta,aPaternoAlerta,aMaternoAlerta,edad,nacionalidad,colorOjos,estatura,complexion,fechaNacimiento,fechaHechos,lugarHechos,descripcionHechos,cadena;
+    String nombreCompleto,nombreAlerta,aPaternoAlerta,aMaternoAlerta,varSexo,edad,nacionalidad,colorOjos,estatura,complexion,fechaNacimiento,fechaHechos,lugarHechos,descripcionHechos,cadena;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private int dia,mes,año,dia1,mes1,año1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alerta_amber);
 
+        home = findViewById(R.id.imgHomeAlertaAmber);
         btnEnviarAlertaAmber = findViewById(R.id.btnEnviarAlertaAmber);
         rgSexo = findViewById(R.id.rgSexo);
         txtNombreAlerta = findViewById(R.id.txtNombreAlerta);
@@ -66,6 +72,66 @@ public class AlertaAmber extends AppCompatActivity {
         txtDescripcionHechos = findViewById(R.id.txtDescripcionHechos);
         pickFotoAvatar = findViewById(R.id.pickFoto_Amber);
         avatar2 = findViewById(R.id.profile_image_Amber);
+
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(AlertaAmber.this,MenuEventos.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        /*********************** CALENDARIO PARA FECHAS EN FORMULARIOS *********************************/
+
+        txtFechaNacimiento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                dia = c.get(Calendar.DAY_OF_MONTH);
+                mes = c.get(Calendar.MONTH);
+                año = c.get(Calendar.YEAR);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AlertaAmber.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        txtFechaNacimiento.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                    }
+
+                }, dia, mes, año);
+                datePickerDialog.show();
+            }
+        });
+
+        txtFechaHechos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                dia1 = c.get(Calendar.DAY_OF_MONTH);
+                mes1 = c.get(Calendar.MONTH);
+                año1 = c.get(Calendar.YEAR);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AlertaAmber.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        txtFechaHechos.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                    }
+
+                }, dia1, mes1, año1);
+                datePickerDialog.show();
+            }
+        });
+
+        rgSexo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rbMasculino) {
+                    varSexo = "MASCULINO";
+                } else if (checkedId == R.id.rbFemenino) {
+                    varSexo = "FEMENINO";
+                }
+            }
+        });
 
         pickFotoAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +158,10 @@ public class AlertaAmber extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "SU A. MATERNO ES NECESARIO", Toast.LENGTH_LONG).show();
                 }else if(txtAmaternoAlerta.getText().length() < 3){
                     Toast.makeText(getApplicationContext(), "LO SENTIMOS, SU A. MATERNO NO PUEDE SER MENOR A 3 LETRAS", Toast.LENGTH_LONG).show();
+                }else if(banderaFoto == 0){
+                    Toast.makeText(getApplicationContext(), "LO SENTIMOS, LA FOTOGRAFIA ES NECESARIA PARA LA BUSQUEDA DE LA PERSONA DESAPARECIDA", Toast.LENGTH_LONG).show();
                 }else{
+                    Toast.makeText(getApplicationContext(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_LONG).show();
                     insertImagenDesaparecido();
                     insertUserDesaparecido();
                 }
@@ -137,9 +206,14 @@ public class AlertaAmber extends AppCompatActivity {
     }
     //********************************** INSERTA IMAGEN AL SERVIDOR ***********************************//
     public void insertImagenDesaparecido() {
+        nombreAlerta = txtNombreAlerta.getText().toString();
+        aPaternoAlerta = txtApaternoAlerta.getText().toString();
+        aMaternoAlerta = txtAmaternoAlerta.getText().toString();
+        nombreCompleto = nombreAlerta+" "+aPaternoAlerta+" "+aMaternoAlerta;
+
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("Description", nombreAlerta+".jpg")
+                .add("Description", nombreCompleto+".jpg")
                 .add("ImageData", cadena)
                 .build();
         Request request = new Request.Builder()
@@ -182,13 +256,14 @@ public class AlertaAmber extends AppCompatActivity {
         fechaHechos = txtFechaHechos.getText().toString();
         lugarHechos = txtLugarHechos.getText().toString();
         descripcionHechos = txtDescripcionHechos.getText().toString();
+        nombreCompleto = nombreAlerta+" "+aPaternoAlerta+" "+aMaternoAlerta;
 
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
                 .add("Nombre",nombreAlerta)
                 .add("APaterno",aPaternoAlerta)
                 .add("AMaterno",aMaternoAlerta)
-                .add("Genero","")
+                .add("Genero",varSexo)
                 .add("Edad",edad)
                 .add("Nacionalidad",nacionalidad)
                 .add("ColorOjos",colorOjos)
@@ -198,12 +273,12 @@ public class AlertaAmber extends AppCompatActivity {
                 .add("FechaHechos",fechaHechos)
                 .add("LugarHechos",lugarHechos)
                 .add("DescripcionHechos",descripcionHechos)
-                .add("UrlaFoto","http://187.174.102.142/AppMovimientoVecinal/FotoDesaparecidos/"+nombreAlerta+".jpg")
+                .add("UrlaFoto","http://187.174.102.142/AppMovimientoVecinal/FotoDesaparecidos/"+nombreCompleto+".jpg")
                 .add("StatusDesaparicion","1")
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://187.174.102.142/AppMovimientoVecinal/api/UsuarioNoRegistrado")
+                .url("http://187.174.102.142/AppMovimientoVecinal/api/AlertaAmber/")
                 .post(body)
                 .build();
         client.newCall(request).enqueue(new Callback() {
@@ -237,6 +312,7 @@ public class AlertaAmber extends AppCompatActivity {
                             txtDescripcionHechos.setText("");
                             avatar2.clearAnimation();
                             pickFotoAvatar.setVisibility(View.VISIBLE);
+                            rgSexo.clearCheck();
                         }
                     });
                 }

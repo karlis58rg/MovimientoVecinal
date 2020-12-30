@@ -47,19 +47,14 @@
         <ScrollView
             android:id="@+id/scrollAlertaAmber"
             android:layout_width="match_parent"
-            android:layout_height="650dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginRight="0dp">
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/imgImagen"
@@ -100,6 +95,7 @@
                     android:layout_marginTop="30dp"
                     android:layout_marginLeft="40dp"
                     android:maxLength="30"
+                    android:imeOptions="actionNext"
                     android:layout_below="@id/profile_image_Amber"/>
 
                 <EditText
@@ -111,6 +107,7 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginLeft="40dp"
                     android:inputType="textCapCharacters"
+                    android:imeOptions="actionNext"
                     android:maxLength="30"/>
                 <EditText
                     android:id="@+id/txtAmaternoAlerta"
@@ -121,7 +118,8 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginLeft="40dp"
                     android:inputType="textCapCharacters"
-                    android:maxLength="30"/>
+                    android:maxLength="30"
+                    android:imeOptions="actionNext"/>
                 <TextView
                     android:id="@+id/lblSexo"
                     android:layout_width="wrap_content"
@@ -161,7 +159,8 @@
                     android:hint="Edad:"
                     android:layout_below="@id/lblSexo"
                     android:layout_marginTop="15dp"
-                    android:layout_marginLeft="40dp"/>
+                    android:layout_marginLeft="40dp"
+                    android:imeOptions="actionNext"/>
 
                 <EditText
                     android:id="@+id/txtNacionalidad"
@@ -183,14 +182,15 @@
                     android:layout_below="@id/txtNacionalidad"
                     android:layout_marginTop="15dp"
                     android:layout_marginLeft="40dp"
-                    android:maxLength="20"/>
+                    android:maxLength="20"
+                    android:imeOptions="actionNext"/>
 
                 <EditText
                     android:id="@+id/txtEstatura"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:hint="Estatura:"
                     android:layout_below="@id/txtColorOjos"
                     android:layout_marginTop="15dp"
@@ -206,17 +206,18 @@
                     android:layout_below="@id/txtEstatura"
                     android:layout_marginTop="15dp"
                     android:layout_marginLeft="40dp"
-                    android:maxLength="30"/>
+                    android:maxLength="30"
+                    android:imeOptions="actionNext"/>
 
                 <EditText
                     android:id="@+id/txtFechaNacimiento"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:hint="Fecha de nacimiento:"
-                    android:inputType="textCapCharacters"
                     android:layout_below="@id/txtComplexion"
                     android:layout_marginTop="15dp"
-                    android:layout_marginLeft="40dp"/>
+                    android:layout_marginLeft="40dp"
+                    android:imeOptions="actionNext"/>
 
                 <EditText
                     android:id="@+id/txtFechaHechos"
@@ -224,9 +225,9 @@
                     android:layout_height="wrap_content"
                     android:hint="Fecha de los hechos:"
                     android:layout_below="@id/txtFechaNacimiento"
-                    android:inputType="textCapCharacters"
                     android:layout_marginTop="15dp"
-                    android:layout_marginLeft="40dp"/>
+                    android:layout_marginLeft="40dp"
+                    android:imeOptions="actionNext"/>
 
                 <EditText
                     android:id="@+id/txtLugarHechos"
@@ -245,11 +246,11 @@
                     android:layout_height="80dp"
                     android:gravity="start|top"
                     android:inputType="textMultiLine"
-                    android:textAllCaps="true"
                     android:hint="Descripción de los hechos:"
                     android:layout_below="@id/txtLugarHechos"
                     android:layout_marginTop="15dp"
-                    android:layout_marginLeft="40dp"/>
+                    android:layout_marginLeft="40dp"
+                    android:imeOptions="actionNext"/>
 
                 <Button
                     android:id="@+id/btnEnviarAlertaAmber"
@@ -260,8 +261,7 @@
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/btn_redondo"
                     android:layout_below="@id/txtDescripcionHechos"
-                    android:layout_marginBottom="50dp"/>
-
+                    android:layout_marginBottom="100dp"/>
 
             </RelativeLayout>
         </ScrollView>

@@ -173,10 +173,10 @@ public class FormRegistroUsuario extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     final String myResponse = response.body().toString();
-
                     FormRegistroUsuario.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            guardarDatosUser();
                             Toast.makeText(getApplicationContext(), "REGISTRO ENVIADO CON EXITO", Toast.LENGTH_SHORT).show();
                             txtNombre.setText("");
                             txtApaterno.setText("");
@@ -320,5 +320,14 @@ public class FormRegistroUsuario extends AppCompatActivity {
             ActivityCompat.requestPermissions(FormRegistroUsuario.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.RECORD_AUDIO,Manifest.permission.CALL_PHONE}, 1000);
 
         }
+    }
+    //***************************** SE GUARDAN LOS DATOS DE LA PERSONA REGISTRADA *********************************//
+    private void guardarDatosUser(){
+        share = getSharedPreferences("main",MODE_PRIVATE);
+        editor = share.edit();
+        editor.putString("NOMBRE",nombre);
+        editor.putString("APATERNO",aPaterno);
+        editor.putString("AMATERNO",aMaterno);
+        editor.commit();
     }
 }

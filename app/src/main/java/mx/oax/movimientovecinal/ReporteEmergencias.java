@@ -21,6 +21,9 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.os.Environment;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -29,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -52,8 +56,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -73,15 +89,29 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
     ScrollView scroll;
 
     /************** EVENTOS*****************/
-    EditText descEmergencia;
-    ImageView photo,video,audio,imgImagen;
+    EditText txtDescEmergencia;
+    ImageView home,photo,video,audio,imgImagen,recordAu,playAu,detenerAudio;
     VideoView videoViewImage;
     Chronometer tiempo;
     Button btnSendEmergencia;
+    Switch switchDisc;
     int bandera = 0;
+    int status = 0;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_VIDEO_CAPTURE = 1;
     String cadena,cadenaVideo,cadenaAudio,mediaPath;
+    String fecha,hora,rutaMultimedia,descEmergencia;
+    String cargarInfoTelefono,cargarInfoNombre,cargarInfoApaterno,cargarInfoAmaterno;
+    int numberRandom;
+    String randomCodigoVerifi,codigoVerifi;
+    String opcDiscapacidad = "NO";
+    long detenerse;
+    Boolean correr = false;
+    int runAudio = 0;
+    private String outputFile = null;
+    private MediaRecorder miGrabacion;
+    SharedPreferences share;
+    SharedPreferences.Editor editor;
 
 
     public ReporteEmergencias() {
@@ -107,8 +137,12 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_reporte_emergencias, container, false);
+        //*****************************************************************//
+        cargarDatos();
+        Random();
         scroll= view.findViewById(R.id.scrollMap);
 
+        home = view.findViewById(R.id.imgHome);
         photo = view.findViewById(R.id.imgImagen);
         video = view.findViewById(R.id.imgVideo);
         audio= view.findViewById(R.id.imgAudio);
@@ -116,23 +150,46 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
         imgImagen = view.findViewById(R.id.viewImage);
         videoViewImage = view.findViewById(R.id.viewVideo);
 
-        /*recordAu = view.findViewById(R.id.btnRecordAudio);
-        playAu = view.findViewById(R.id.btnPlayAudio);
-        detenerAudio = view.findViewById(R.id.btnDetener);*/
+        recordAu = view.findViewById(R.id.imgGrabar);
+        playAu = view.findViewById(R.id.imgReproducir);
+        detenerAudio = view.findViewById(R.id.imgDetener);
 
         tiempo = view.findViewById(R.id.timer);
 
         btnSendEmergencia = view.findViewById(R.id.btnEnviarEmergencia);
 
-        descEmergencia = view.findViewById(R.id.txtEmergencia);
+        txtDescEmergencia = view.findViewById(R.id.txtEmergencia);
+        /////posicion de cursor///////////
+        txtDescEmergencia.setFocusableInTouchMode(true);
+        txtDescEmergencia.requestFocus();
 
         imgImagen.setVisibility(view.GONE);
         videoViewImage.setVisibility(view.GONE);
         tiempo.setVisibility(View.GONE);
-        //recordAu.setVisibility(view.GONE);
-        //detenerAudio.setVisibility(view.GONE);
-        //playAu.setVisibility(view.GONE);
+        recordAu.setVisibility(view.GONE);
+        detenerAudio.setVisibility(view.GONE);
+        playAu.setVisibility(view.GONE);
+        switchDisc = view.findViewById(R.id.switchDiscapacidad);
 
+
+        switchDisc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isCheked) {
+                if(isCheked == true){
+                    opcDiscapacidad = "SI";
+                }else{
+                    opcDiscapacidad = "NO";
+                }
+            }
+        });
+
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(),MenuEventos.class);
+                startActivity(i);
+            }
+        });
 
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,10 +201,10 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
                 bandera = 1;
                 imgImagen.setVisibility(view.VISIBLE);
                 videoViewImage.setVisibility(view.GONE);
-                /*playAu.setVisibility(View.GONE);
+                playAu.setVisibility(View.GONE);
                 recordAu.setVisibility(View.GONE);
                 detenerAudio.setVisibility(View.GONE);
-                tiempo.setVisibility(View.GONE);*/
+                tiempo.setVisibility(View.GONE);
                 llamarItem();
                 Toast.makeText(getActivity(), "PROCESANDO SU SOLICITUD DE IMAGEN", Toast.LENGTH_SHORT).show();
             }
@@ -158,15 +215,15 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
                 if(bandera == 1 || bandera == 3){
                     imgImagen.clearAnimation();
-                    //resetChronometro();
+                    resetChronometro();
                 }
                 bandera = 2;
                 videoViewImage.setVisibility(view.VISIBLE);
                 imgImagen.setVisibility(view.GONE);
-               /* playAu.setVisibility(View.GONE);
+                playAu.setVisibility(View.GONE);
                 recordAu.setVisibility(View.GONE);
                 detenerAudio.setVisibility(View.GONE);
-                tiempo.setVisibility(View.GONE);*/
+                tiempo.setVisibility(View.GONE);
                 llamarItemVideo();
                 Toast.makeText(getActivity(), "PROCESANDO SU SOLICITUD DE VIDEO", Toast.LENGTH_SHORT).show();
 
@@ -180,36 +237,75 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
                     videoViewImage.clearAnimation();
                 }
                 bandera = 3;
-               /* recordAu.setVisibility(view.VISIBLE);
+                recordAu.setVisibility(view.VISIBLE);
                 detenerAudio.setVisibility(View.VISIBLE);
                 detenerAudio.setEnabled(false);
-                tiempo.setVisibility(View.VISIBLE);*/
+                tiempo.setVisibility(View.VISIBLE);
                 videoViewImage.setVisibility(view.GONE);
                 imgImagen.setVisibility(view.GONE);
-                //Toast.makeText(getActivity(), "PROCESANDO SU SOLICITUD DE AUDIO", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), "EN ESTOS MOMENTOS ESTA OPCIÓN NO ESTA DISPONIBLE", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "PROCESANDO SU SOLICITUD DE AUDIO", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        recordAu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                grabar();
+            }
+        });
+
+        detenerAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                detener();
+            }
+        });
+
+        playAu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reproducir();
             }
         });
 
         btnSendEmergencia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(descEmergencia.getText().toString().isEmpty()){
-                    Toast.makeText(getActivity(),"EL CAMPO **DESCRIPCIÓN DE EMERGENCIA** ES OBLIGATORIO",Toast.LENGTH_SHORT).show();
-                }else {
-                    if (bandera == 1){
-                        imgImagen.setVisibility(View.GONE);
-                        imgImagen.clearAnimation();
-                    }
-                    if(bandera == 2){
-                        videoViewImage.setVisibility(View.GONE);
-                        videoViewImage.clearAnimation();
-                    }
-                    descEmergencia.setText("");
-                    Toast.makeText(getActivity(),"SUS REPORTE HA SIDO ENVIADO",Toast.LENGTH_SHORT).show();
-
+                if (txtDescEmergencia.getText().toString().isEmpty()) {
+                    Toast.makeText(getActivity(), "EL CAMPO **DESCRIPCIÓN DE EMERGENCIA** ES OBLIGATORIO", Toast.LENGTH_SHORT).show();
+                } else if (bandera == 1) {
+                    Toast.makeText(getActivity(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
+                    insertBdEventoIOS();
+                    insertImagen();
+                   /* Intent i = new Intent(getActivity(), MensajeSalida.class);
+                    i.putExtra("valorRandom", randomCodigoVerifi);
+                    startActivity(i);*/
+                } else if (bandera == 2) {
+                    Toast.makeText(getActivity(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
+                    insertBdEventoIOS();
+                    insertVideo();
+                    //Intent i = new Intent(getActivity(), MensajeSalida.class);
+                    //i.putExtra("valorRandom", randomCodigoVerifi);
+                    //startActivity(i);
+                } else if (bandera == 3) {
+                    recordAu.setVisibility(view.GONE);
+                    detenerAudio.setVisibility(view.GONE);
+                    playAu.setVisibility(view.GONE);
+                    tiempo.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
+                    insertBdEventoIOS();
+                    insertAudio();
+                    resetChronometro();
+                   // Intent i = new Intent(getActivity(), MensajeSalida.class);
+                   // i.putExtra("valorRandom", randomCodigoVerifi);
+                   // startActivity(i);
+                } else {
+                    Toast.makeText(getActivity(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
+                    insertBdEventoIOS();
+                    //Intent i = new Intent(getActivity(), MensajeSalida.class);
+                    //i.putExtra("valorRandom", randomCodigoVerifi);
+                    //startActivity(i);
                 }
-
             }
         });
 
@@ -475,8 +571,7 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
     }
 
     //********************************** SE CONVIERTE A BASE64 ***********************************//
-    private void imagen()
-    {
+    private void imagen(){
         imgImagen.buildDrawingCache();
         Bitmap bitmap = imgImagen.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -489,5 +584,349 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
         Bitmap decoded= BitmapFactory.decodeByteArray(imgBytes,0,imgBytes.length);
         imgImagen.setImageBitmap(decoded);
         System.out.print("IMAGEN" + imgImagen);
+    }
+    //********************************** INSERTA REGISTRO A LA BD ***********************************//
+    //*********************** METODO QUE INSERTA A LA BASE DE DATOS DESPUES DE INSERTAR AL CAD ***********************//
+    public void insertBdEventoIOS() {
+        if(bandera == 2){
+            Toast.makeText(getActivity(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
+        }
+        //*************** FECHA **********************//
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        fecha = dateFormat.format(date);
+
+        //*************** HORA **********************//
+        Date time = new Date();
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        hora = timeFormat.format(time);
+
+        //************************************* RUTA MULTIMEDIA *************************//
+        if (bandera == 1) {
+            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Images/" + cargarInfoTelefono + ".jpg";
+
+        } else if (bandera == 2) {
+            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Video/" + cargarInfoTelefono + ".mp4";
+
+        } else if (bandera == 3) {
+            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Audio/" + cargarInfoTelefono + ".mp4";
+        } else {
+            rutaMultimedia = "Sin Archivo";
+        }
+        descEmergencia = txtDescEmergencia.getText().toString().toUpperCase();
+
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody body = new FormBody.Builder()
+                .add("Folio", randomCodigoVerifi)
+                .add("Telefono", cargarInfoTelefono)
+                .add("NombreUsuario", cargarInfoNombre)
+                .add("APaternoUsuario", cargarInfoApaterno)
+                .add("AMaternoUsuario", cargarInfoAmaterno)
+                .add("Municipio", municipio)
+                .add("Estado", estado)
+                .add("Latitud", lat_origen.toString())
+                .add("Longitud", lon_origen.toString())
+                .add("DescripcionEmergencia", descEmergencia)
+                .add("Discapacidad", opcDiscapacidad)
+                .add("Fecha", fecha)
+                .add("Hora", hora)
+                .add("Archivo", rutaMultimedia)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://187.174.102.142/AppMovimientoVecinal/api/Eventos911/")
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Looper.prepare(); // to be able to make toast
+                Toast.makeText(getContext(), "ERROR AL ENVIAR SU REGISTRO, FAVOR DE VERIFICAR SU CONEXCIÓN A INTERNET", Toast.LENGTH_LONG).show();
+                Looper.loop();
+                // Toast.makeText(getActivity(), "ERROR AL ENVIAR SU REGISTRO", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    final String myResponse = response.body().toString();  /********** ME REGRESA LA RESPUESTA DEL WS ****************/
+
+                    ReporteEmergencias.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "REGISTRO ENVIADO CON EXITO", Toast.LENGTH_SHORT).show();
+                            bandera = 0;
+                            txtDescEmergencia.setText("");
+                            imgImagen.setVisibility(View.GONE);
+                            videoViewImage.setVisibility(View.GONE);
+                            imgImagen.clearAnimation();
+                            videoViewImage.clearAnimation();
+                            playAu.setVisibility(View.GONE);
+                            recordAu.setVisibility(View.GONE);
+                            detenerAudio.setVisibility(View.GONE);
+                            tiempo.setVisibility(View.GONE);
+                            switchDisc.setChecked(false);
+
+                        }
+                    });
+                }
+            }
+        });
+    }
+    //********************************** INSERTA IMAGEN AL SERVIDOR ***********************************//
+    public void insertImagen() {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("Description",cargarInfoTelefono +".jpg" )
+                .add("ImageData", cadena)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://187.174.102.142/AppMovimientoVecinal/api/MultimediaImageUser/")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Looper.prepare(); // to be able to make toast
+                Toast.makeText(getContext(), "ERROR AL ENVIAR SU REGISTRO, FAVOR DE VERIFICAR SU CONEXCIÓN A INTERNET", Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    final String myResponse = response.body().toString();  /********** ME REGRESA LA RESPUESTA DEL WS ****************/
+
+                    ReporteEmergencias.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Toast.makeText(getActivity(), "REGISTRO ENVIADO CON EXITO", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    //********************************** INSERTA VIDEO AL SERVIDOR ***********************************//
+    public void insertVideo() {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("DescriptionVideo", cargarInfoTelefono+".mp4" )
+                .add("VideoData", cadenaVideo)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://187.174.102.142/AppMovimientoVecinal/api/MultimediaVideoUser/")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Looper.prepare(); // to be able to make toast
+                Toast.makeText(getContext(), "ERROR AL ENVIAR SU REGISTRO", Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    final String myResponse = response.body().toString();  /********** ME REGRESA LA RESPUESTA DEL WS ****************/
+
+                    ReporteEmergencias.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Toast.makeText(getActivity(), "REGISTRO ENVIADO CON EXITO", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    //********************************** INSERTA AUDIO AL SERVIDOR ***********************************//
+    public void insertAudio() {
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("DescriptionAudio", cargarInfoTelefono+".mp4" )
+                .add("AudioData", cadenaAudio)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://187.174.102.142/AppMovimientoVecinal/api/MultimediaAudioUser/")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Looper.prepare(); // to be able to make toast
+                Toast.makeText(getContext(), "ERROR AL ENVIAR SU REGISTRO", Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    final String myResponse = response.body().toString();  /********** ME REGRESA LA RESPUESTA DEL WS ****************/
+
+                    ReporteEmergencias.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Toast.makeText(getActivity(), "REGISTRO ENVIADO CON EXITO", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    //********************* INICIA EL CONTADOR **********************************************************************//
+    private void resetChronometro() {
+        tiempo.setBase(SystemClock.elapsedRealtime());
+        detenerse = 0;
+    }
+    private void stopChronometro() {
+        if(correr){
+            tiempo.stop();
+            detenerse = SystemClock.elapsedRealtime() -tiempo.getBase();
+            correr = false;
+
+        }
+    }
+    private void startChronometro() {
+        runAudio = 1;
+        if(!correr){
+            tiempo.setBase(SystemClock.elapsedRealtime() -detenerse);
+            tiempo.start();
+            correr = true;
+        }
+    }
+    ////*********************************************GRABAR AUDIO*********************************************//////
+    public void grabar() {
+        if(status == 1){
+            resetChronometro();
+            detenerAudio.setEnabled(false);
+        }else if(status == 2){
+            resetChronometro();
+            detenerAudio.setEnabled(false);
+        }
+        startChronometro();
+        detenerAudio.setEnabled(true);
+        recordAu.setEnabled(false);
+        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Grabacion.3gp";
+        miGrabacion = new MediaRecorder();
+        miGrabacion.setAudioSource(MediaRecorder.AudioSource.MIC);
+        miGrabacion.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        miGrabacion.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        miGrabacion.setOutputFile(outputFile);
+        try {
+            miGrabacion.prepare();
+            miGrabacion.start();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //Toast.makeText(getActivity().getApplicationContext(), "La grabación comenzó", Toast.LENGTH_LONG).show();
+        //detenerAudio.setVisibility(View.VISIBLE);
+        //recordAu.setVisibility(View.GONE);
+        //playAu.setVisibility(View.GONE);
+    }
+    public void detener() {
+        status = 1;
+        runAudio = 0;
+        stopChronometro();
+        recordAu.setEnabled(true);
+        if (miGrabacion != null) {
+            miGrabacion.stop();
+            miGrabacion.release();
+            miGrabacion = null;
+            //Toast.makeText(getActivity().getApplicationContext(), "El audio fue grabado con éxito", Toast.LENGTH_LONG).show();
+        }
+        playAu.setVisibility(View.VISIBLE);
+        playAu.setEnabled(true);
+    }
+    public void reproducir() {
+        if(correr == true){
+            Toast.makeText(getActivity(), "LO SENTIMOS, DEBE DETENER LA GRABACIÓN ", Toast.LENGTH_SHORT).show();
+        }
+        status = 2;
+        MediaPlayer m = new MediaPlayer();
+        try {
+            m.setDataSource(outputFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            m.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        m.start();
+        //Toast.makeText(getActivity().getApplicationContext(), "reproducción de audio", Toast.LENGTH_LONG).show();
+        audioBase64();
+    }
+    public void audioBase64(){
+        //CONVERTIR AUDIO A BASE64
+        InputStream inputStream = null;
+        String audioEncodeString = null;
+        try
+        {
+            inputStream = new FileInputStream(outputFile);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        byte[] bytes;
+        byte[] bufferAudio = new byte[8192];
+        int bytesAudioRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try
+        {
+            while ((bytesAudioRead = inputStream.read(bufferAudio)) != -1)
+            {
+                output.write(bufferAudio,0,bytesAudioRead);
+            }
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        bytes = output.toByteArray();
+        audioEncodeString = Base64.encodeToString(bytes,Base64.DEFAULT);
+        cadenaAudio = audioEncodeString;
+    }
+
+    //*********************************************************************//
+    public void cargarDatos() {
+        share = getActivity().getSharedPreferences("main", Context.MODE_PRIVATE);
+        cargarInfoTelefono = share.getString("TELEFONO", "");
+        cargarInfoNombre = share.getString("NOMBRE", "SIN INFORMACION");
+        cargarInfoApaterno = share.getString("APATERNO", "SIN INFORMACION");
+        cargarInfoAmaterno = share.getString("AMATERNO", "SIN INFORMACION");
+    }
+    //********************* GENERA EL NÚMERO ALEATORIO PARA EL FOLIO *****************************//
+    public void Random(){
+        Random random = new Random();
+        numberRandom = random.nextInt(9000)*99;
+        codigoVerifi = String.valueOf(numberRandom);
+        randomCodigoVerifi = "OAX2021"+codigoVerifi;
     }
 }

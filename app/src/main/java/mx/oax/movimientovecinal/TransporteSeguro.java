@@ -2,10 +2,12 @@ package mx.oax.movimientovecinal;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,11 +18,14 @@ public class TransporteSeguro extends AppCompatActivity {
     TextView lblNoPlaca;
     Button btnIniciar;
     String placa;
+    ImageView home;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transporte_seguro);
+
+        home = findViewById(R.id.imgHomeTransporte);
 
         /***************FASE 1********************/
         lyTransporte = findViewById(R.id.lyTransporte);
@@ -44,6 +49,15 @@ public class TransporteSeguro extends AppCompatActivity {
         lyDetenerServicioEjecución.setVisibility(View.INVISIBLE);
         lblNoPlaca.setVisibility(View.INVISIBLE);
         lyEmergenciaEnviada.setVisibility(View.INVISIBLE);
+
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(TransporteSeguro.this,MenuEventos.class);
+                startActivity(i);
+                finish();
+            }
+        });
 
         btnIniciar.setOnClickListener(new View.OnClickListener() {
             @Override
