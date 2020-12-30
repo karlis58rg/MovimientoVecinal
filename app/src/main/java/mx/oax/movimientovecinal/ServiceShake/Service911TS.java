@@ -380,7 +380,7 @@ public class Service911TS extends Service implements SensorEventListener {
     public void insertBdEventoTransportePublicoIOS(){
         bandera = 1;
         cargar();
-        valorRandom = "C5i2019"+ randomCodigoVerifi;
+        valorRandom = "OAX2021"+ randomCodigoVerifi;
         //*************** FECHA **********************//
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -406,7 +406,7 @@ public class Service911TS extends Service implements SensorEventListener {
                 .add("Longitud", cargarInfoLong)
                 .add("Hora", hora)
                 .add("Fecha", fecha)
-                .add("idTipoEmergencia", "6000") /*********¿QUÉ TIPO DE EMERGENCIA ES**************/
+                //.add("idTipoEmergencia", "6000") /*********¿QUÉ TIPO DE EMERGENCIA ES**************/
                 .build();
 
         Request request = new Request.Builder()
@@ -491,7 +491,7 @@ public class Service911TS extends Service implements SensorEventListener {
 
         final OkHttpClient client = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url("http://c5.hidalgo.gob.mx:58/api/EventosTransportePublicoRobos?folioRobo=C5i2019"+randomCodigoVerifi+"&statusRobo=1")
+                .url("http://187.174.102.142/AppMovimientoVecinal/api/EventosTransportePublicoRobosApp?folioRobo=OAX2021"+randomCodigoVerifi+"&statusRobo=1")
                 //.url("http://c5.hidalgo.gob.mx:58/api/EventosTransportePublicoRobos?folioRobo=C5I2019891&statusRobo=1")
                 .build();
         client.newCall(request).enqueue(new Callback() {
