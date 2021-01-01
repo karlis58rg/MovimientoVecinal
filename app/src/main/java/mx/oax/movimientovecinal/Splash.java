@@ -36,7 +36,7 @@ public class Splash extends AppCompatActivity {
                     finish();
                 }
             }
-        },4000);
+        },3000);
     }
 
     private void cargarDatos(){

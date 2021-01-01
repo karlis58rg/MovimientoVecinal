@@ -239,5 +239,12 @@
             </RelativeLayout>
         </ScrollView>
     </RelativeLayout>
-
+    <TextView
+        android:id="@+id/lblCoordenadasSensorPlaca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coordenadas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

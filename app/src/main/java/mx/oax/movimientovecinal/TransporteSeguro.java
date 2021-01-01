@@ -14,7 +14,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -28,12 +33,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 import mx.oax.movimientovecinal.ServiceShake.Service911TS;
 
 public class TransporteSeguro extends AppCompatActivity {
     LinearLayout lyTransporte,lyIntroduce,lyPlaca,lyEnviarPlaca,lyPlacaEnviada,lyEncasoDe,lyDetenerServicio,lyDetenerServicioEjecución,lyEmergenciaEnviada;
     EditText txtPlaca;
-    TextView lblNoPlaca;
+    TextView lblNoPlaca,coordenadas;
     Button btnIniciar,btnDetenerServicio;
     String placa;
     ImageView home;
@@ -47,6 +56,9 @@ public class TransporteSeguro extends AppCompatActivity {
     AlertDialog alert = null;
     String cargarInfoServicio,cargarInfoPlaca;
     String cargarInfoServicioShake = "creado";
+    String mensaje1,mensaje2;
+    String direc;
+    Double lat,lon;
 
     //********************** SENSOR *******************************//
     Intent mServiceIntent;
@@ -63,7 +75,7 @@ public class TransporteSeguro extends AppCompatActivity {
         setContentView(R.layout.activity_transporte_seguro);
 
         cargarServicio();
-        //locationStart();
+        locationStart();
 
         home = findViewById(R.id.imgHomeTransporte);
 
@@ -75,6 +87,7 @@ public class TransporteSeguro extends AppCompatActivity {
         txtPlaca = findViewById(R.id.txtPlaca);
         btnIniciar = findViewById(R.id.btnIniciar);
         btnDetenerServicio = findViewById(R.id.btnDetenerServicio);
+        coordenadas = (TextView)findViewById(R.id.lblCoordenadasSensorPlaca);
 
         /*************FASE 2********************/
         lyPlacaEnviada = findViewById(R.id.lyPlacaEnviada);
@@ -350,6 +363,101 @@ public class TransporteSeguro extends AppCompatActivity {
         share = getSharedPreferences("main",MODE_PRIVATE);
         cargarInfoServicio = share.getString("servicio",null);
         //Toast.makeText(getApplicationContext(),"Dato Eliminado",Toast.LENGTH_LONG).show();
+    }
+
+    /***********************************************************************************************************************/
+    //Apartir de aqui empezamos a obtener la direciones y coordenadas
+    public void locationStart() {
+        LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        TransporteSeguro.Localizacion Local = new TransporteSeguro.Localizacion();
+        Local.setFormTransporteSeguro(this);
+        final boolean gpsEnabled = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (!gpsEnabled) {
+            Intent settingsIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(settingsIntent);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+            return;
+        }
+        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) Local);
+        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) Local);
+        mensaje1 = "Localizacion agregada";
+        mensaje2 = "";
+        Log.i("HERE", mensaje1);
+    }
+
+    public void setLocation(Location loc) {
+        //Obtener la direccion de la calle a partir de la latitud y la longitud
+        if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
+            try {
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                List<Address> list = geocoder.getFromLocation(
+                        loc.getLatitude(), loc.getLongitude(), 1);
+                if (!list.isEmpty()) {
+                    Address DirCalle = list.get(0);
+                    direc = DirCalle.getAddressLine(0);
+                    /*municipio = DirCalle.getLocality();
+                    estado = DirCalle.getAdminArea();
+                    if(municipio != null) {
+                        municipio = DirCalle.getLocality();
+                    }else{
+                        municipio = "SIN INFORMACION";
+                    }*/
+                    Log.i("HERE", "dir" + direc);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    /* Aqui empieza la Clase Localizacion */
+    public class Localizacion implements LocationListener {
+        TransporteSeguro formTransporteSeguro;
+        public TransporteSeguro getFormTransporteSeguro() {
+            return formTransporteSeguro;
+        }
+        public void setFormTransporteSeguro(TransporteSeguro formTransporteSeguro) {
+            this.formTransporteSeguro = formTransporteSeguro;
+        }
+        @Override
+        public void onLocationChanged(Location loc) {
+            // Este metodo se ejecuta cada vez que el GPS recibe nuevas coordenadas
+            // debido a la deteccion de un cambio de ubicacion
+            loc.getLatitude();
+            loc.getLongitude();
+            lat = loc.getLatitude();
+            lon = loc.getLongitude();
+            String Text = "Lat = "+ loc.getLatitude() + "\n Long = " + loc.getLongitude();
+            mensaje1 = Text;
+            coordenadas.setText(direc+" "+mensaje1);
+            Log.i("HERE", mensaje1);
+            this.formTransporteSeguro.setLocation(loc);
+        }
+        @Override
+        public void onProviderDisabled(String provider) {
+            // Este metodo se ejecuta cuando el GPS es desactivado
+            mensaje1 = "GPS Desactivado";
+        }
+        @Override
+        public void onProviderEnabled(String provider) {
+            // Este metodo se ejecuta cuando el GPS es activado
+            mensaje1 = "GPS Activado";
+        }
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            switch (status) {
+                case LocationProvider.AVAILABLE:
+                    Log.d("debug", "LocationProvider.AVAILABLE");
+                    break;
+                case LocationProvider.OUT_OF_SERVICE:
+                    Log.d("debug", "LocationProvider.OUT_OF_SERVICE");
+                    break;
+                case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                    Log.d("debug", "LocationProvider.TEMPORARILY_UNAVAILABLE");
+                    break;
+            }
+        }
     }
 
 }
