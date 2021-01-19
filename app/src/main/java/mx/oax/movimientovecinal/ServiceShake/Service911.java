@@ -45,8 +45,8 @@ public class Service911 extends Service implements SensorEventListener {
     public long diferencia;
     public String cargarInfoSDK;
     public int cargarInfoValorShake = 0;
-    public String serbar = "sincrear";
-    int bandera = 0;
+    public String serbar911 = "sincrear";
+    int bandera911 = 0;
 
     SharedPreferences shared;
     SharedPreferences.Editor editor;
@@ -128,10 +128,10 @@ public class Service911 extends Service implements SensorEventListener {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            bandera = 1;
+            bandera911 = 1;
             Log.i("HERE","ACTUALIZANDO EVENTO");
-            serbar = "creado";
-            Log.i("HERE",serbar);
+            serbar911 = "creado";
+            Log.i("HERE",serbar911);
             guardarServicio();
             Log.i("HERE","ACTUALIZANDO EVENTO DESPUES DE CREARLO");
         }
@@ -196,8 +196,8 @@ public class Service911 extends Service implements SensorEventListener {
     private void guardarServicio(){
         shared = getSharedPreferences("main",MODE_PRIVATE);
         editor = shared.edit();
-        editor.putString("servicio",serbar);
-        editor.putInt("bandera",bandera);
+        editor.putString("servicio911",serbar911);
+        editor.putInt("bandera911",bandera911);
         editor.apply();
     }
 

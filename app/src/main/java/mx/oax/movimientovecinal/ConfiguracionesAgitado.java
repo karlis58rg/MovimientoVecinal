@@ -90,7 +90,7 @@ public class ConfiguracionesAgitado extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(ConfiguracionesAgitado.this);
-                builder.setMessage("EL VALOR DE SU SACUDIDA ESTA POR SER ESTABLECIDO")
+                builder.setMessage("EL VALOR DE SU SACUDIDA ESTÁ POR SER ESTABLECIDO")
                         .setCancelable(false)
                         .setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
                             @Override
@@ -159,14 +159,14 @@ public class ConfiguracionesAgitado extends AppCompatActivity {
 
     private void cargarServicio(){
         share = getSharedPreferences("main",MODE_PRIVATE);
-        cargarInfoServicio = share.getString("servicio",null);
-        cargarInfoBandera = share.getInt("bandera",0);
+        cargarInfoServicio = share.getString("servicio911",null);
+        cargarInfoBandera = share.getInt("bandera911",0);
     }
 
     private void eliminarServicio(){
         share = getSharedPreferences("main",MODE_PRIVATE);
         editor = share.edit();
-        editor.remove("bandera").commit();
+        editor.remove("bandera911").commit();
         //Toast.makeText(getApplicationContext(),"Dato Eliminado",Toast.LENGTH_LONG).show();
     }
 

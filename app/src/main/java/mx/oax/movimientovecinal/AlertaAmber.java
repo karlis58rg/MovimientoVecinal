@@ -28,6 +28,7 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -49,11 +50,14 @@ public class AlertaAmber extends AppCompatActivity {
     String nombreCompleto,nombreAlerta,aPaternoAlerta,aMaternoAlerta,varSexo,edad,nacionalidad,colorOjos,estatura,complexion,fechaNacimiento,fechaHechos,lugarHechos,descripcionHechos,cadena;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private int dia,mes,año,dia1,mes1,año1;
+    int numberRandom;
+    String randomCodigoVerifi,codigoVerifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alerta_amber);
+        Random();
 
         home = findViewById(R.id.imgHomeAlertaAmber);
         btnEnviarAlertaAmber = findViewById(R.id.btnEnviarAlertaAmber);
@@ -209,11 +213,10 @@ public class AlertaAmber extends AppCompatActivity {
         nombreAlerta = txtNombreAlerta.getText().toString();
         aPaternoAlerta = txtApaternoAlerta.getText().toString();
         aMaternoAlerta = txtAmaternoAlerta.getText().toString();
-        nombreCompleto = nombreAlerta+" "+aPaternoAlerta+" "+aMaternoAlerta;
 
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("Description", nombreCompleto+".jpg")
+                .add("Description", randomCodigoVerifi+".jpg")
                 .add("ImageData", cadena)
                 .build();
         Request request = new Request.Builder()
@@ -256,7 +259,6 @@ public class AlertaAmber extends AppCompatActivity {
         fechaHechos = txtFechaHechos.getText().toString();
         lugarHechos = txtLugarHechos.getText().toString();
         descripcionHechos = txtDescripcionHechos.getText().toString();
-        nombreCompleto = nombreAlerta+" "+aPaternoAlerta+" "+aMaternoAlerta;
 
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
@@ -273,7 +275,7 @@ public class AlertaAmber extends AppCompatActivity {
                 .add("FechaHechos",fechaHechos)
                 .add("LugarHechos",lugarHechos)
                 .add("DescripcionHechos",descripcionHechos)
-                .add("UrlaFoto","http://187.174.102.142/AppMovimientoVecinal/FotoDesaparecidos/"+nombreCompleto+".jpg")
+                .add("UrlaFoto","http://187.174.102.142/AppMovimientoVecinal/FotoDesaparecidos/"+randomCodigoVerifi+".jpg")
                 .add("StatusDesaparicion","1")
                 .build();
 
@@ -318,6 +320,14 @@ public class AlertaAmber extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    //********************* GENERA EL NÚMERO ALEATORIO PARA EL FOLIO *****************************//
+    public void Random(){
+        Random random = new Random();
+        numberRandom = random.nextInt(9000)*99;
+        codigoVerifi = String.valueOf(numberRandom);
+        randomCodigoVerifi = "OAX2021"+codigoVerifi;
     }
 
 

@@ -9,8 +9,9 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Menú principal</string>
-    <string name="menu_gallery">Acerca de</string>
-    <string name="menu_slideshow">Funciones</string>
+    <string name="menu_gallery">¿Qué es?</string>
+    <string name="menu_funciones">Funciones</string>
+    <string name="menu_slideshow">Configuración agitado</string>
     <string name="menu_tools">Aviso de privacidad</string>
     <string name="menu_share">Terminos y condiciones</string>
     <string name="menu_send">Salir</string>
@@ -18,3 +19,4 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
+

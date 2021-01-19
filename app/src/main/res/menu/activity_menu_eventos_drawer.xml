@@ -13,8 +13,12 @@
             android:icon="@drawable/ic_info_black_24dp"
             android:title="@string/menu_gallery" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/funciones"
             android:icon="@drawable/ic_view_carousel_black_24dp"
+            android:title="@string/menu_funciones" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_info_black_24dp"
             android:title="@string/menu_slideshow" />
         <item
             android:id="@+id/nav_tools"

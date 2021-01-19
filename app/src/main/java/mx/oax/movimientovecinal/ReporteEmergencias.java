@@ -603,15 +603,15 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
 
         //************************************* RUTA MULTIMEDIA *************************//
         if (bandera == 1) {
-            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Images/" + cargarInfoTelefono + ".jpg";
+            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Images/" + randomCodigoVerifi + ".jpg";
 
         } else if (bandera == 2) {
-            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Video/" + cargarInfoTelefono + ".mp4";
+            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Video/" + randomCodigoVerifi + ".mp4";
 
         } else if (bandera == 3) {
-            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Audio/" + cargarInfoTelefono + ".mp4";
+            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Audio/" + randomCodigoVerifi + ".mp4";
         } else {
-            rutaMultimedia = "Sin Archivo";
+            rutaMultimedia = "http://187.174.102.142/AppMovimientoVecinal/Images/sinarchivo.jpg";
         }
         descEmergencia = txtDescEmergencia.getText().toString().toUpperCase();
 
@@ -679,7 +679,7 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
     public void insertImagen() {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("Description",cargarInfoTelefono +".jpg" )
+                .add("Description",randomCodigoVerifi +".jpg" )
                 .add("ImageData", cadena)
                 .build();
 
@@ -717,7 +717,7 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
     public void insertVideo() {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("DescriptionVideo", cargarInfoTelefono+".mp4" )
+                .add("DescriptionVideo", randomCodigoVerifi+".mp4" )
                 .add("VideoData", cadenaVideo)
                 .build();
 
@@ -757,7 +757,7 @@ public class ReporteEmergencias extends Fragment implements OnMapReadyCallback {
 
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("DescriptionAudio", cargarInfoTelefono+".mp4" )
+                .add("DescriptionAudio", randomCodigoVerifi+".mp4" )
                 .add("AudioData", cadenaAudio)
                 .build();
 

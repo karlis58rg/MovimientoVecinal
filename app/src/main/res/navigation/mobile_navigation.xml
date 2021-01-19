@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
+        android:id="@+id/funciones"
+        android:name="mx.oax.movimientovecinal.ui.funciones.Funciones"
+        android:label="funciones_fragment"
+        tools:layout="@layout/funciones_fragment" />
+
+    <fragment
         android:id="@+id/nav_slideshow"
         android:name="mx.oax.movimientovecinal.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
@@ -40,4 +46,5 @@
         android:name="mx.oax.movimientovecinal.ui.send.SendFragment"
         android:label="@string/menu_send"
         tools:layout="@layout/fragment_send" />
+
 </navigation>

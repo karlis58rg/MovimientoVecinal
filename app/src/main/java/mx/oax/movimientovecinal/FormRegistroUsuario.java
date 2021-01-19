@@ -44,6 +44,7 @@ public class FormRegistroUsuario extends AppCompatActivity {
     String nombre,aPaterno,aMaterno,direccionUsuario,noConfianza,cadena;
     String cargarInfoTelefono,cargarInfoNombre,cargarInfoApaterno,cargarInfoAmaterno,cargarInfoDireccion,cargarInfoNuc,cargarInfoIdVictima;
     int bandera = 0;
+    int banderaUserRegistrado = 0;
     int banderaFoto = 0;
     SharedPreferences share;
     SharedPreferences.Editor editor;
@@ -68,6 +69,8 @@ public class FormRegistroUsuario extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "USUARIO NO REGISTRADO", Toast.LENGTH_LONG).show();
         }else{
             bandera = 2;
+            banderaUserRegistrado = 1;
+            guardarDatoRegistrado();
             Toast.makeText(getApplicationContext(), "USUARIO REGISTRADO", Toast.LENGTH_LONG).show();
             txtNombre.setText(cargarInfoNombre);
             txtApaterno.setText(cargarInfoApaterno);
@@ -201,7 +204,7 @@ public class FormRegistroUsuario extends AppCompatActivity {
 
         Request request = new Request.Builder()
                 .url("http://187.174.102.142/AppMovimientoVecinal/api/Victimas?nucVictima="+cargarInfoNuc+"&idVictima="+cargarInfoIdVictima+"&telConfianza="+noConfianza)
-                .put(body)
+                .post(body)
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -328,6 +331,13 @@ public class FormRegistroUsuario extends AppCompatActivity {
         editor.putString("NOMBRE",nombre);
         editor.putString("APATERNO",aPaterno);
         editor.putString("AMATERNO",aMaterno);
+        editor.commit();
+    }
+
+    private void guardarDatoRegistrado(){
+        share = getSharedPreferences("main",MODE_PRIVATE);
+        editor = share.edit();
+        editor.putInt("BANDERAUSERREGISTRADO",banderaUserRegistrado);
         editor.commit();
     }
 }
