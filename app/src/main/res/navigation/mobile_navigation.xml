@@ -28,7 +28,11 @@
         android:name="mx.oax.movimientovecinal.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
-
+    <fragment
+        android:id="@+id/transporte"
+        android:name="mx.oax.movimientovecinal.ui.transporte.transporte"
+        android:label="transporte_fragment"
+        tools:layout="@layout/transporte_fragment" />
     <fragment
         android:id="@+id/nav_tools"
         android:name="mx.oax.movimientovecinal.ui.tools.ToolsFragment"
@@ -46,5 +50,6 @@
         android:name="mx.oax.movimientovecinal.ui.send.SendFragment"
         android:label="@string/menu_send"
         tools:layout="@layout/fragment_send" />
+
 
 </navigation>

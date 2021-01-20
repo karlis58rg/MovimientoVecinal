@@ -1,59 +1,53 @@
-package mx.oax.movimientovecinal.ui.slideshow;
+package mx.oax.movimientovecinal.ui.transporte;
+
+import androidx.annotation.RequiresApi;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
-import mx.oax.movimientovecinal.MenuEventos;
 import mx.oax.movimientovecinal.MiWidget;
 import mx.oax.movimientovecinal.R;
-import mx.oax.movimientovecinal.ServiceShake.Service911;
 
-public class SlideshowFragment extends Fragment {
+public class transporte extends Fragment {
 
-    private SlideshowViewModel slideshowViewModel;
+    private TransporteViewModel mViewModel;
     Button btnCrear;
-    public static int num_imag_violencia = 0;
+    public static int num_imag_transporte = 0;
     SharedPreferences share;
     SharedPreferences.Editor editor;
-    int widgetViolencia = 0;
+    int widgetTransporte = 0;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        slideshowViewModel =
-                ViewModelProviders.of(this).get(SlideshowViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
+    public static transporte newInstance() {
+        return new transporte();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.transporte_fragment, container, false);
         /*************************************************************/
         //*****************************************************************//
-        btnCrear = root.findViewById(R.id.boton_crear_widget);
-
+        btnCrear = root.findViewById(R.id.boton_crear_widget_transporte);
         btnCrear.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                widgetViolencia = 2;
+                widgetTransporte = 1;
                 guardarActividad();
                 AppWidgetManager mAppWidgetManager = v.getContext().getSystemService(AppWidgetManager.class);
                 ComponentName myProvider = new ComponentName(v.getContext(), MiWidget.class);
@@ -62,14 +56,20 @@ public class SlideshowFragment extends Fragment {
                 }
             }
         });
-
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(TransporteViewModel.class);
+        // TODO: Use the ViewModel
     }
 
     private void guardarActividad() {
         share = getActivity().getSharedPreferences("main",getContext().MODE_PRIVATE);
         editor = share.edit();
-        editor.putInt("VIOLENCIA", widgetViolencia );
+        editor.putInt("TRANSPORTE", widgetTransporte );
         editor.commit();
         // Toast.makeText(getApplicationContext(),"Dato Guardado",Toast.LENGTH_LONG).show();
     }

@@ -21,8 +21,8 @@ public class ConfiguracionWidgets extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracion_widgets);
 
-        btnCambiarImagen = findViewById(R.id.boton_cambiar_imagen);
-        btnCrearWidget = findViewById(R.id.boton_crear_widget);
+        btnCambiarImagen = findViewById(R.id.boton_cambiar_imagen1);
+        btnCrearWidget = findViewById(R.id.boton_crear_widget1);
 
         btnCambiarImagen.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)

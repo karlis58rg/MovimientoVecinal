@@ -11,7 +11,8 @@
     <string name="menu_home">Menú principal</string>
     <string name="menu_gallery">¿Qué es?</string>
     <string name="menu_funciones">Funciones</string>
-    <string name="menu_slideshow">Configuración agitado</string>
+    <string name="menu_slideshow">Conf. Alto a la violencia</string>
+    <string name="menu_transporte">Conf. Transporte seguro</string>
     <string name="menu_tools">Aviso de privacidad</string>
     <string name="menu_share">Terminos y condiciones</string>
     <string name="menu_send">Salir</string>
