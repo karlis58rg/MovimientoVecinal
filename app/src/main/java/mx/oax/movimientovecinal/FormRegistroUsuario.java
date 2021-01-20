@@ -186,7 +186,7 @@ public class FormRegistroUsuario extends AppCompatActivity {
                             txtAmaterno.setText("");
                             txtDireccion.setText("");
                             txtNoConfianza.setText("");
-                            Intent i = new Intent(FormRegistroUsuario.this,ConfiguracionesAgitado.class);
+                            Intent i = new Intent(FormRegistroUsuario.this,MenuEventos.class);
                             startActivity(i);
                             finish();
                         }

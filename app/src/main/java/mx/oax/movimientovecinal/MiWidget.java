@@ -37,7 +37,7 @@ import mx.oax.movimientovecinal.ui.transporte.transporte;
 public class MiWidget extends AppWidgetProvider {
     SharedPreferences share;
     SharedPreferences.Editor editor;
-    int cargarInfoViolenciaWidget,cargarInfoTransporteWidget;
+    int cargarInfoViolenciaWidget,cargarInfoTransporteWidget,wTransporte,cargarInfoWtransporte;
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -53,46 +53,44 @@ public class MiWidget extends AppWidgetProvider {
 
             if(cargarInfoTransporteWidget == 1) {
                 final int N = appWidgetIds.length;
+                for (int i = 0; i < N; i++) {
+                    int appWidgetId = appWidgetIds[i];
                     System.out.println(cargarInfoTransporteWidget);
                     Intent intent = new Intent(context, TransporteSeguro.class);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
                     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.mi_widget);
-                    views.setOnClickPendingIntent(R.id.boton_abrir_app, pendingIntent);
-
-                    SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss");
-                    String strDate = mdformat.format(Calendar.getInstance().getTime());
-                    views.setTextViewText(R.id.hora_ultima_actualizacion, strDate);
-
+                    views.setOnClickPendingIntent(R.id.imagen_widget, pendingIntent);
                     if (transporte.num_imag_transporte == 0) {
                         views.setImageViewResource(R.id.imagen_widget, R.drawable.ic_destino);
                     }
-                    System.out.println(appWidgetIds);
+                    System.out.println(appWidgetId);
+                    wTransporte = 1;
                     share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
                     editor = share.edit();
+                    editor.putInt("WTRANSPORTE", wTransporte ).commit();
                     editor.remove("TRANSPORTE").commit();
-                    appWidgetManager.updateAppWidget(appWidgetIds, views);
+                    appWidgetManager.updateAppWidget(appWidgetId, views);
 
+                }
             }
             if(cargarInfoViolenciaWidget == 2) {
                 final int N = appWidgetIds.length;
+                for (int i = 0; i < N; i++) {
+                    int appWidgetId = appWidgetIds[i];
                     System.out.println(cargarInfoViolenciaWidget);
                     Intent intent = new Intent(context, AltoALaViolencia.class);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
                     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.mi_widget);
-                    views.setOnClickPendingIntent(R.id.boton_abrir_app, pendingIntent);
-
-                    SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss");
-                    String strDate = mdformat.format(Calendar.getInstance().getTime());
-                    views.setTextViewText(R.id.hora_ultima_actualizacion, strDate);
-
+                    views.setOnClickPendingIntent(R.id.imagen_widget, pendingIntent);
                     if (SlideshowFragment.num_imag_violencia == 0) {
                         views.setImageViewResource(R.id.imagen_widget, R.drawable.ic_altoviolencia);
                     }
-                    System.out.println(appWidgetIds);
+                    System.out.println(appWidgetId);
                     share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
                     editor = share.edit();
                     editor.remove("VIOLENCIA").commit();
-                    appWidgetManager.updateAppWidget(appWidgetIds, views);
+                    appWidgetManager.updateAppWidget(appWidgetId, views);
+                }
             }
 
         }
@@ -105,6 +103,22 @@ public class MiWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+        System.out.println("SE QUITA LA INSTANCIA DEL WIDGET");
+    }
+
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
+        cargarInfoWtransporte = share.getInt("WTRANSPORTE", 0);
+        if(cargarInfoWtransporte == 1){
+            share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
+            editor = share.edit();
+            editor.remove("WTRANSPORTE").commit();
+            System.out.println("SE ELIMINA WIDGET TRANSPORTE");
+        }else {
+            System.out.println("SE ELIMINA WIDGET VIOLENCIA");
+        }
+        super.onDeleted(context, appWidgetIds);
     }
 }
 

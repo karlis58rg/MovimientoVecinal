@@ -1,14 +1,19 @@
 package mx.oax.movimientovecinal;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +25,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -38,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 
 import mx.oax.movimientovecinal.ServiceShake.Service911TS;
+import mx.oax.movimientovecinal.ui.transporte.transporte;
 
 public class TransporteSeguro extends AppCompatActivity {
     LinearLayout lyTransporte,lyIntroduce,lyPlaca,lyEnviarPlaca,lyPlacaEnviada,lyEncasoDe,lyDetenerServicio,lyDetenerServicioEjecución,lyEmergenciaEnviada;
@@ -59,6 +66,8 @@ public class TransporteSeguro extends AppCompatActivity {
     String mensaje1,mensaje2;
     String direc;
     Double lat,lon;
+    int cargarInfoWtransporteSeguro = 0;
+    int wTransporteSeguro = 0;
 
     //********************** SENSOR *******************************//
     Intent mServiceIntent;
@@ -73,10 +82,8 @@ public class TransporteSeguro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transporte_seguro);
-
         cargarServicio();
         locationStart();
-
         home = findViewById(R.id.imgHomeTransporte);
 
         /***************FASE 1********************/
@@ -103,6 +110,41 @@ public class TransporteSeguro extends AppCompatActivity {
         lyDetenerServicioEjecución.setVisibility(View.INVISIBLE);
         lblNoPlaca.setVisibility(View.INVISIBLE);
         lyEmergenciaEnviada.setVisibility(View.INVISIBLE);
+        txtPlaca.setEnabled(false);
+
+        if(cargarInfoWtransporteSeguro == 1){
+            txtPlaca.setEnabled(true);
+        }else {
+            txtPlaca.setEnabled(false);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("LO SENTIMOS, ES NECESARIO TENER UN ACCESO DIRECTO CONFIGURADO")
+                    .setCancelable(false)
+                    .setPositiveButton("CONFIGURAR ACCESO DIRECTO", new DialogInterface.OnClickListener() {
+                        @SuppressLint("NewApi")
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            wTransporteSeguro = 1;
+                            guardarActividad();
+                            AppWidgetManager mAppWidgetManager = getSystemService(AppWidgetManager.class);
+                            ComponentName myProvider = new ComponentName(getApplication(), MiWidget.class);
+                            if(mAppWidgetManager.isRequestPinAppWidgetSupported()){
+                                mAppWidgetManager.requestPinAppWidget(myProvider,null,null);
+                            }
+                            finish();
+
+                        }
+                    })
+                    .setNegativeButton("EN OTRO MOMENTO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                            finish();
+                        }
+                    });
+            alert = builder.create();
+            alert.show();
+        }
 
         home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,7 +392,16 @@ public class TransporteSeguro extends AppCompatActivity {
     private void cargarServicio(){
         share = getSharedPreferences("main",MODE_PRIVATE);
         cargarInfoServicio = share.getString("servicio","");
+        cargarInfoWtransporteSeguro = share.getInt("WTRANSPORTE", 0);
         //Toast.makeText(getApplicationContext(),cargarInfoServicio,Toast.LENGTH_LONG).show();
+    }
+    private void guardarActividad() {
+        share = getSharedPreferences("main",MODE_PRIVATE);
+        editor = share.edit();
+        editor.putInt("WTRANSPORTE", wTransporteSeguro );
+        editor.putInt("TRANSPORTE", 1 );
+        editor.commit();
+        // Toast.makeText(getApplicationContext(),"Dato Guardado",Toast.LENGTH_LONG).show();
     }
 
     private void cargarPlaca() {
