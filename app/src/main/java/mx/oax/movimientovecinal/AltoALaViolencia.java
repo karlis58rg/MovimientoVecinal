@@ -57,8 +57,7 @@ public class AltoALaViolencia extends AppCompatActivity {
     String cargarInfoTelefono,cargarInfoNombre,cargarInfoApaterno,cargarInfoAmaterno;
     String mensaje1,mensaje2,direccion, municipio, estado,fecha,hora;
     Double lat,lon;
-    private LocationManager locationManager;
-    String numero,respuestaJson,m_Item1;
+    String respuestaJson,m_Item1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +65,11 @@ public class AltoALaViolencia extends AppCompatActivity {
         setContentView(R.layout.activity_alto_ala_violencia);
         cargarUserRegistrado();
         Random();
-        locationStart();
+        //locationStart();
         if(cargarInfoUserRegistrado == 0){
             getUserViolencia();
+        }else if(cargarInfoUserRegistrado == 1) {
+            insertUserRegistrado();
         }
 
         btnViolencia = findViewById(R.id.btnViolencia);
@@ -99,6 +100,12 @@ public class AltoALaViolencia extends AppCompatActivity {
 
     //********************************** INSERT Y UPDATE AL SERVIDOR ***********************************//
     public void insertUserRegistrado(){
+/*            locationStart();
+            do {
+                locationStart();
+            }while (direccion == null);{
+            }*/
+
         //*************** FECHA **********************//
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -116,13 +123,13 @@ public class AltoALaViolencia extends AppCompatActivity {
                 .add("NombreUsuario",cargarInfoNombre)
                 .add("ApaternoUsuario",cargarInfoApaterno)
                 .add("AmaternoUsuario",cargarInfoAmaterno)
-                .add("Municipio",municipio)
-                .add("Latitud",lat.toString())
-                .add("Longitud",lon.toString())
+                .add("Municipio","")
+                .add("Latitud","")
+                .add("Longitud","")
                 .add("DescripcionEmergencia","VIOLENCIA CONTRA LA MUJER")
                 .add("Fecha",fecha)
                 .add("Hora",hora)
-                .add("RutaImagenImputado",direccion)
+                .add("RutaImagenImputado","")
                 .build();
 
         Request request = new Request.Builder()
@@ -357,4 +364,5 @@ public class AltoALaViolencia extends AppCompatActivity {
             }
         });
     }
+
 }
