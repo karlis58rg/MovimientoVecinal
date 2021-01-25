@@ -38,7 +38,7 @@
                     android:layout_marginLeft="10dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:text="Reporte Vecinal"/>
+                    android:text="911 Oaxaca"/>
             </LinearLayout>
 
             <LinearLayout
@@ -63,7 +63,7 @@
                     android:layout_marginLeft="10dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:text="Transporte Seguro"/>
+                    android:text="Movilidad Segura"/>
             </LinearLayout>
 
             <LinearLayout
@@ -87,7 +87,7 @@
                     android:layout_marginLeft="10dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:text="Alto a la Violencia"/>
+                    android:text="Mujer Oaxaqueña"/>
             </LinearLayout>
 
             <LinearLayout
@@ -111,7 +111,7 @@
                     android:layout_marginLeft="10dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:text="Vigilancia Vecinal"/>
+                    android:text="Alerta Vecinal"/>
             </LinearLayout>
 
             <LinearLayout

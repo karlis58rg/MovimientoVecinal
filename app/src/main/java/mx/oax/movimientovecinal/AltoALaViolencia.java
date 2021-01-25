@@ -1,11 +1,16 @@
 package mx.oax.movimientovecinal;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,6 +20,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
@@ -52,12 +58,13 @@ public class AltoALaViolencia extends AppCompatActivity {
     int cargarInfoUserRegistrado,cargarInfoVictimaUserRegistrado;
     SharedPreferences share;
     SharedPreferences.Editor editor;
-    int numberRandom;
+    int numberRandom,cargarInfoWaltoViolencia;
     String randomCodigoVerifi,codigoVerifi;
-    String cargarInfoTelefono,cargarInfoNombre,cargarInfoApaterno,cargarInfoAmaterno;
+    String cargarInfoTelefono,cargarInfoNombre,cargarInfoApaterno,cargarInfoAmaterno,cargarInfoDireccion,cargarInfoMunicipio,cargarInfoLat,cargarInfoLong;
     String mensaje1,mensaje2,direccion, municipio, estado,fecha,hora;
     Double lat,lon;
     String respuestaJson,m_Item1;
+    int wAltoViolencia = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +72,51 @@ public class AltoALaViolencia extends AppCompatActivity {
         setContentView(R.layout.activity_alto_ala_violencia);
         cargarUserRegistrado();
         Random();
-        //locationStart();
-        if(cargarInfoUserRegistrado == 0){
+        locationStart();
+        if(cargarInfoUserRegistrado != 1){
+            getUserViolencia();
+            Intent i = new Intent(AltoALaViolencia.this,MensajeSalidaAltoViolencia.class);
+            startActivity(i);
+        }
+        if(cargarInfoWaltoViolencia == 1){
+            Toast.makeText(getApplicationContext(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
+            insertUserRegistrado();
+        }else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("LO SENTIMOS, ES NECESARIO TENER UN ACCESO DIRECTO CONFIGURADO")
+                    .setCancelable(false)
+                    .setPositiveButton("CONFIGURAR ACCESO DIRECTO", new DialogInterface.OnClickListener() {
+                        @SuppressLint("NewApi")
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            wAltoViolencia= 1;
+                            guardarActividad();
+                            AppWidgetManager mAppWidgetManager = getSystemService(AppWidgetManager.class);
+                            ComponentName myProvider = new ComponentName(getApplication(), MiWidget.class);
+                            if(mAppWidgetManager.isRequestPinAppWidgetSupported()){
+                                mAppWidgetManager.requestPinAppWidget(myProvider,null,null);
+                            }
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("EN OTRO MOMENTO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                            finish();
+                        }
+                    });
+            alert = builder.create();
+            alert.show();
+        }
+
+
+        /*if(cargarInfoUserRegistrado == 0){
             getUserViolencia();
         }else if(cargarInfoUserRegistrado == 1) {
             insertUserRegistrado();
-        }
+        }*/
 
         btnViolencia = findViewById(R.id.btnViolencia);
         home = findViewById(R.id.imgHomeViolencia);
@@ -87,24 +133,15 @@ public class AltoALaViolencia extends AppCompatActivity {
         btnViolencia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(cargarInfoUserRegistrado == 1){
                     Toast.makeText(getApplicationContext(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
                     insertUserRegistrado();
-                }else {
-                    Intent i = new Intent(AltoALaViolencia.this,MensajeSalidaAltoViolencia.class);
-                    startActivity(i);
-                }
             }
         });
     }
 
     //********************************** INSERT Y UPDATE AL SERVIDOR ***********************************//
     public void insertUserRegistrado(){
-/*            locationStart();
-            do {
-                locationStart();
-            }while (direccion == null);{
-            }*/
+        cargarUserRegistrado();
 
         //*************** FECHA **********************//
         Date date = new Date();
@@ -123,13 +160,13 @@ public class AltoALaViolencia extends AppCompatActivity {
                 .add("NombreUsuario",cargarInfoNombre)
                 .add("ApaternoUsuario",cargarInfoApaterno)
                 .add("AmaternoUsuario",cargarInfoAmaterno)
-                .add("Municipio","")
-                .add("Latitud","")
-                .add("Longitud","")
+                .add("Municipio",cargarInfoMunicipio)
+                .add("Latitud",cargarInfoLat)
+                .add("Longitud",cargarInfoLong)
                 .add("DescripcionEmergencia","VIOLENCIA CONTRA LA MUJER")
                 .add("Fecha",fecha)
                 .add("Hora",hora)
-                .add("RutaImagenImputado","")
+                .add("RutaImagenImputado",cargarInfoDireccion)
                 .build();
 
         Request request = new Request.Builder()
@@ -170,6 +207,11 @@ public class AltoALaViolencia extends AppCompatActivity {
         cargarInfoNombre = share.getString("NOMBRE", "SIN INFORMACION");
         cargarInfoApaterno = share.getString("APATERNO", "SIN INFORMACION");
         cargarInfoAmaterno = share.getString("AMATERNO", "SIN INFORMACION");
+        cargarInfoWaltoViolencia = share.getInt("WVIOLENCIA", 0);
+        cargarInfoMunicipio = share.getString("MUNICIPIO", "SIN INFORMACION");
+        cargarInfoLat = share.getString("LATITUDE", "SIN INFORMACION");
+        cargarInfoLong = share.getString("LONGITUDE", "SIN INFORMACION");
+        cargarInfoDireccion = share.getString("DIRECCION", "SIN INFORMACION");
     }
     //********************* GENERA EL NÚMERO ALEATORIO PARA EL FOLIO *****************************//
     public void Random(){
@@ -313,6 +355,14 @@ public class AltoALaViolencia extends AppCompatActivity {
         share = getSharedPreferences("main", MODE_PRIVATE);
         editor = share.edit();
         editor.putInt("BANDERAUSERREGISTRADO", cargarInfoVictimaUserRegistrado);
+        editor.commit();
+        // Toast.makeText(getApplicationContext(),"Dato Guardado",Toast.LENGTH_LONG).show();
+    }
+    private void guardarActividad() {
+        share = getSharedPreferences("main",MODE_PRIVATE);
+        editor = share.edit();
+        editor.putInt("WVIOLENCIA", wAltoViolencia );
+        editor.putInt("VIOLENCIA", 2 );
         editor.commit();
         // Toast.makeText(getApplicationContext(),"Dato Guardado",Toast.LENGTH_LONG).show();
     }

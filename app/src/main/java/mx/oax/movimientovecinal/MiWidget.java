@@ -37,7 +37,7 @@ import mx.oax.movimientovecinal.ui.transporte.transporte;
 public class MiWidget extends AppWidgetProvider {
     SharedPreferences share;
     SharedPreferences.Editor editor;
-    int cargarInfoViolenciaWidget,cargarInfoTransporteWidget,wTransporte,cargarInfoWtransporte;
+    int cargarInfoViolenciaWidget,cargarInfoTransporteWidget,wTransporte,wViolencia,cargarInfoWtransporte,cargarInfoWviolencia;
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -70,7 +70,6 @@ public class MiWidget extends AppWidgetProvider {
                     editor.putInt("WTRANSPORTE", wTransporte ).commit();
                     editor.remove("TRANSPORTE").commit();
                     appWidgetManager.updateAppWidget(appWidgetId, views);
-
                 }
             }
             if(cargarInfoViolenciaWidget == 2) {
@@ -86,13 +85,14 @@ public class MiWidget extends AppWidgetProvider {
                         views.setImageViewResource(R.id.imagen_widget, R.drawable.ic_altoviolencia);
                     }
                     System.out.println(appWidgetId);
+                    wViolencia = 1;
                     share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
                     editor = share.edit();
+                    editor.putInt("WVIOLENCIA", wViolencia ).commit();
                     editor.remove("VIOLENCIA").commit();
                     appWidgetManager.updateAppWidget(appWidgetId, views);
                 }
             }
-
         }
 
     @Override
@@ -110,12 +110,16 @@ public class MiWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
         cargarInfoWtransporte = share.getInt("WTRANSPORTE", 0);
+        cargarInfoWviolencia = share.getInt("WVIOLENCIA", 0);
         if(cargarInfoWtransporte == 1){
             share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
             editor = share.edit();
             editor.remove("WTRANSPORTE").commit();
             System.out.println("SE ELIMINA WIDGET TRANSPORTE");
-        }else {
+        }else if (cargarInfoWviolencia == 1) {
+            share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
+            editor = share.edit();
+            editor.remove("WVIOLENCIA").commit();
             System.out.println("SE ELIMINA WIDGET VIOLENCIA");
         }
         super.onDeleted(context, appWidgetIds);
