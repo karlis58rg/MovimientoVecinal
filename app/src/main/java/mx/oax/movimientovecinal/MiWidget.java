@@ -38,6 +38,7 @@ public class MiWidget extends AppWidgetProvider {
     SharedPreferences share;
     SharedPreferences.Editor editor;
     int cargarInfoViolenciaWidget,cargarInfoTransporteWidget,wTransporte,wViolencia,cargarInfoWtransporte,cargarInfoWviolencia;
+    String cargarInfoPlacaTransporte;
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -50,6 +51,7 @@ public class MiWidget extends AppWidgetProvider {
         share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
         cargarInfoTransporteWidget = share.getInt("TRANSPORTE", 0);
         cargarInfoViolenciaWidget= share.getInt("VIOLENCIA", 0);
+        cargarInfoPlacaTransporte = share.getString("PLACA", "SIN INFORMACION");
 
             if(cargarInfoTransporteWidget == 1) {
                 final int N = appWidgetIds.length;

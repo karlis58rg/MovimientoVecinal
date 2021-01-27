@@ -61,7 +61,7 @@ public class TransporteSeguro extends AppCompatActivity {
     private Context context;
     int acceso = 0;
     AlertDialog alert = null;
-    String cargarInfoServicio,cargarInfoPlaca;
+    String cargarInfoServicio,cargarInfoPlaca,cargarInfoPlacaGuardada = "SIN INFORMACION";
     String cargarInfoServicioShake = "creado";
     String mensaje1,mensaje2;
     String direc;
@@ -83,7 +83,7 @@ public class TransporteSeguro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transporte_seguro);
         cargarServicio();
-        locationStart();
+        cargarPlaca();
         home = findViewById(R.id.imgHomeTransporte);
 
         /***************FASE 1********************/
@@ -172,21 +172,22 @@ public class TransporteSeguro extends AppCompatActivity {
             Toast.makeText(getApplicationContext()," **GPS** ES OBLIGATORIO PARA EL CORRECTO FUNCIONAMIENTO DEL APLICATIVO",Toast.LENGTH_LONG).show();
         }
 
-        if (cargarInfoServicio.equals(cargarInfoServicioShake)) {
-            cargarPlaca();
-            //Toast.makeText(getApplicationContext(), "YA TIENES UN SERVICIO EN EJECUCION CON LA PLACA: " + cargarInfoPlaca, Toast.LENGTH_LONG).show();
+        if(cargarInfoPlaca.equals(cargarInfoPlacaGuardada)){
+
+        }else{
             lblNoPlaca.setText(cargarInfoPlaca);
-            /*inicia.setVisibility(View.GONE);
-            detiene.setVisibility(View.VISIBLE);
-            paloma.setVisibility(View.VISIBLE);
-            txtPlaca.setVisibility(View.GONE);
-            lblagita.setVisibility(View.VISIBLE);
-            emergencia.setVisibility(View.VISIBLE);
-            lblPlaca.setVisibility(View.VISIBLE);
-            fin.setVisibility(View.VISIBLE);*/
-        }/*else{
-            //Toast.makeText(getApplicationContext(),"SIN SERVICO",Toast.LENGTH_LONG).show();
-        }*/
+            lyTransporte.setVisibility(View.INVISIBLE);
+            lyIntroduce.setVisibility(View.INVISIBLE);
+            lyPlaca.setVisibility(View.INVISIBLE);
+            lyEnviarPlaca.setVisibility(View.INVISIBLE);
+
+            lyPlacaEnviada.setVisibility(View.VISIBLE);
+            lyEncasoDe.setVisibility(View.VISIBLE);
+            lyDetenerServicio.setVisibility(View.VISIBLE);
+            lyDetenerServicioEjecución.setVisibility(View.VISIBLE);
+            lblNoPlaca.setVisibility(View.VISIBLE);
+        }
+
 
         btnIniciar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -304,15 +305,16 @@ public class TransporteSeguro extends AppCompatActivity {
                 .setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        limpiarPlaca();
                         if(isMyServiceRunning( mSensorService.getClass())) {
-                            updateServicio();
+                            //updateServicio();
                             stopService( mServiceIntent );
                             stopService( new Intent( TransporteSeguro.this, Service911TS.class ) );
                             onDestroy();
                             System.exit( 0 );
                             Log.i("HEY", "CON SERVICIO INICIADO");
                         }else{
-                            updateServicio();
+                            //updateServicio();
                             Intent intent = new Intent( TransporteSeguro.this, MenuEventos.class );
                             startActivity( intent );
                             finish();
@@ -363,15 +365,16 @@ public class TransporteSeguro extends AppCompatActivity {
                 .setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        limpiarPlaca();
                         if(isMyServiceRunning( mSensorService.getClass())) {
-                            updateServicio();
+                            //updateServicio();
                             stopService( mServiceIntent );
                             stopService( new Intent( TransporteSeguro.this, Service911TS.class ) );
                             onDestroy();
                             System.exit( 0 );
                             Log.i("HEY", "CON SERVICIO INICIADO");
                         }else{
-                            updateServicio();
+                            //updateServicio();
                             Intent intent = new Intent( TransporteSeguro.this, MenuEventos.class );
                             startActivity( intent );
                             finish();
@@ -406,7 +409,7 @@ public class TransporteSeguro extends AppCompatActivity {
 
     private void cargarPlaca() {
         share = getSharedPreferences("main", MODE_PRIVATE);
-        cargarInfoPlaca = share.getString("PLACA", "");
+        cargarInfoPlaca = share.getString("PLACA", "SIN INFORMACION");
         //Toast.makeText(getApplicationContext(),cargarInfoPlaca,Toast.LENGTH_LONG).show();
     }
 
@@ -414,6 +417,11 @@ public class TransporteSeguro extends AppCompatActivity {
         share = getSharedPreferences("main",MODE_PRIVATE);
         cargarInfoServicio = share.getString("servicio",null);
         //Toast.makeText(getApplicationContext(),"Dato Eliminado",Toast.LENGTH_LONG).show();
+    }
+    private void limpiarPlaca(){
+        share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
+        editor = share.edit();
+        editor.remove("PLACA").commit();
     }
 
     /***********************************************************************************************************************/

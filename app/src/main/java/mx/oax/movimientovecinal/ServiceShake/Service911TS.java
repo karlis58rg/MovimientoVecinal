@@ -88,7 +88,7 @@ public class Service911TS extends Service implements SensorEventListener {
     String mensaje1, mensaje2, direccion, municipio, estado;
     String valorRandom,codigoVerifi,randomCodigoVerifi,fecha,hora;
     Double lat, lon;
-    int numberRandom;
+    int numberRandom,cargarInfoWtransporteMW;
     String cargarInfoTelefono,cargarInfoNombre,cargarInfoApaterno,cargarInfoAmaterno,cargarInfoPlaca,cargarInfoDireccion,cargarInfoMunicipio,cargarInfoEstado,cargarInfoLat,cargarInfoLong;
 
     /************GUARDAR PREFERENCIAS DEL SISTEMA***************/
@@ -116,8 +116,6 @@ public class Service911TS extends Service implements SensorEventListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         miTareaSuperTS.execute();
         cargar();
-        version = cargarInfoSDK;
-        comparar = Integer.parseInt(version);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -225,7 +223,17 @@ public class Service911TS extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         cargar();
-        version = cargarInfoSDK;
+        if(cargarInfoPlaca != "SIN INFORMACION" || cargarInfoWtransporteMW != 0){
+            if(bandera == 2){
+                insertBdEventoTransportePublicoRobosIOS();
+            }else{
+                Random();
+                insertBdEventoTransportePublicoIOS();
+                Toast.makeText(getApplicationContext(), "EMERGENCIA ENVIADA", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+/*        version = cargarInfoSDK;
         float x = event.values[0];
         float y = event.values[1];
         float z = event.values[2];
@@ -248,11 +256,11 @@ public class Service911TS extends Service implements SensorEventListener {
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(1500);
                 sacudidas=0;
-                /*FormSensorIngresaPlaca.gifRojo.setVisibility(View.VISIBLE);
+                *//*FormSensorIngresaPlaca.gifRojo.setVisibility(View.VISIBLE);
                 FormSensorIngresaPlaca.bandaroja.setVisibility( View.VISIBLE );
                 FormSensorIngresaPlaca.lblagita.setVisibility(View.INVISIBLE);
                 FormSensorIngresaPlaca.emergencia.setVisibility(View.INVISIBLE);
-                FormSensorIngresaPlaca.paloma.setVisibility(View.INVISIBLE);*/
+                FormSensorIngresaPlaca.paloma.setVisibility(View.INVISIBLE);*//*
                 this.locationStart();
                 if(bandera == 2){
                     insertBdEventoTransportePublicoRobosIOS();
@@ -262,7 +270,7 @@ public class Service911TS extends Service implements SensorEventListener {
                     Toast.makeText(getApplicationContext(), "EMERGENCIA ENVIADA", Toast.LENGTH_SHORT).show();
                 }
             }
-        }
+        }*/
     }
 
     /*********************Apartir de aqui empezamos a obtener la direciones y coordenadas************************/
@@ -552,18 +560,17 @@ public class Service911TS extends Service implements SensorEventListener {
 
     private void cargar() {
         shared = getSharedPreferences("main", MODE_PRIVATE);
-        cargarInfoValorShake = shared.getInt("valorShake", 0);
-        cargarInfoSDK = shared.getString("sdk", "");
-        cargarInfoTelefono = shared.getString("TELEFONO", "");
+        cargarInfoTelefono = shared.getString("TELEFONO", "SIN INFORMACION");
         cargarInfoNombre = shared.getString("NOMBRE", "SIN INFORMACION");
-        cargarInfoApaterno = shared.getString("APATERNO", "");
-        cargarInfoAmaterno = shared.getString("AMATERNO", "");
-        cargarInfoPlaca = shared.getString("PLACA","");
-        cargarInfoDireccion = shared.getString("DIRECCION","");
-        cargarInfoMunicipio = shared.getString("MUNICIPIO","");
-        cargarInfoEstado = shared.getString("ESTADO","");
-        cargarInfoLat = shared.getString("LATITUDE","");
-        cargarInfoLong = shared.getString("LONGITUDE","");
+        cargarInfoApaterno = shared.getString("APATERNO", "SIN INFORMACION");
+        cargarInfoAmaterno = shared.getString("AMATERNO", "SIN INFORMACION");
+        cargarInfoPlaca = shared.getString("PLACA","SIN INFORMACION");
+        cargarInfoDireccion = shared.getString("DIRECCION","SIN INFORMACION");
+        cargarInfoMunicipio = shared.getString("MUNICIPIO","SIN INFORMACION");
+        cargarInfoEstado = shared.getString("ESTADO","SIN INFORMACION");
+        cargarInfoLat = shared.getString("LATITUDE","SIN INFORMACION");
+        cargarInfoLong = shared.getString("LONGITUDE","SIN INFORMACION");
+        cargarInfoWtransporteMW = shared.getInt("WTRANSPORTE", 0);
     }
 
     private void eliminarServicio(){
