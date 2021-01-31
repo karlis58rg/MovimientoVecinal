@@ -73,17 +73,21 @@ public class TransporteSeguro extends AppCompatActivity {
     Intent mServiceIntent;
     private Service911TS mSensorService;
     Context ctx;
+    AppWidgetManager manager;
+    View view;
 
     public Context getCtx() {
         return ctx;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transporte_seguro);
         cargarServicio();
         cargarPlaca();
+
         home = findViewById(R.id.imgHomeTransporte);
 
         /***************FASE 1********************/
@@ -308,6 +312,7 @@ public class TransporteSeguro extends AppCompatActivity {
                         limpiarPlaca();
                         if(isMyServiceRunning( mSensorService.getClass())) {
                             //updateServicio();
+                            limpiarValorWidget();
                             stopService( mServiceIntent );
                             stopService( new Intent( TransporteSeguro.this, Service911TS.class ) );
                             onDestroy();
@@ -315,6 +320,7 @@ public class TransporteSeguro extends AppCompatActivity {
                             Log.i("HEY", "CON SERVICIO INICIADO");
                         }else{
                             //updateServicio();
+                            limpiarValorWidget();
                             Intent intent = new Intent( TransporteSeguro.this, MenuEventos.class );
                             startActivity( intent );
                             finish();
@@ -368,6 +374,7 @@ public class TransporteSeguro extends AppCompatActivity {
                         limpiarPlaca();
                         if(isMyServiceRunning( mSensorService.getClass())) {
                             //updateServicio();
+                            limpiarValorWidget();
                             stopService( mServiceIntent );
                             stopService( new Intent( TransporteSeguro.this, Service911TS.class ) );
                             onDestroy();
@@ -375,6 +382,7 @@ public class TransporteSeguro extends AppCompatActivity {
                             Log.i("HEY", "CON SERVICIO INICIADO");
                         }else{
                             //updateServicio();
+                            limpiarValorWidget();
                             Intent intent = new Intent( TransporteSeguro.this, MenuEventos.class );
                             startActivity( intent );
                             finish();
@@ -422,6 +430,12 @@ public class TransporteSeguro extends AppCompatActivity {
         share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
         editor = share.edit();
         editor.remove("PLACA").commit();
+    }
+
+    private void limpiarValorWidget(){
+        share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
+        editor = share.edit();
+        editor.remove("OPRIMIR").commit();
     }
 
     /***********************************************************************************************************************/

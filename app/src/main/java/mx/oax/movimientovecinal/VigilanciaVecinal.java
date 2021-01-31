@@ -1,5 +1,6 @@
 package mx.oax.movimientovecinal;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -13,6 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +45,7 @@ public class VigilanciaVecinal extends AppCompatActivity {
     SharedPreferences.Editor editor;
     int numberRandom;
     String randomCodigoVerifi,codigoVerifi;
+    private static final String TAG = "VigilanciaVecinal";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +69,21 @@ public class VigilanciaVecinal extends AppCompatActivity {
         btnVigilancia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
-                getUserVigilancia();
+                Log.d(TAG, "SUBSCRIBING TO OAXACA TOPIC");
+                FirebaseMessaging.getInstance().subscribeToTopic("OAXACA").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = getString(R.string.msg_subscribed);
+                        if(!task.isSuccessful()){
+                            msg = getString(R.string.msg_subscribe_failed);
+                        }
+                        Log.d(TAG, msg);
+                        Toast.makeText(VigilanciaVecinal.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                //Toast.makeText(getApplicationContext(), "UN MOMENTO POR FAVOR, ESTAMOS PROCESANDO SU SOLICITUD, ESTO PUEDE TARDAR UNOS MINUTOS", Toast.LENGTH_SHORT).show();
+                //getUserVigilancia();
             }
         });
     }

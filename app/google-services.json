@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "648192344617",
+    "project_id": "movimientovecinal",
+    "storage_bucket": "movimientovecinal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:648192344617:android:f4f2847f7c0bd832f11238",
+        "android_client_info": {
+          "package_name": "mx.oax.movimientovecinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "648192344617-j149btp7vifk7t858k8eavobgucq49qp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mx.oax.movimientovecinal",
+            "certificate_hash": "09a975db5393517222d8591817a478b6225897c2"
+          }
+        },
+        {
+          "client_id": "648192344617-nmr1dcmq9cri68h8vueiqej8bskqclak.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaHYzqytTLUzrR83WuFXnCNx5RiI2C8d8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "648192344617-nmr1dcmq9cri68h8vueiqej8bskqclak.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -37,6 +37,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,6 +47,7 @@ import java.util.Random;
 
 import mx.oax.movimientovecinal.ConfiguracionesAgitado;
 import mx.oax.movimientovecinal.R;
+import mx.oax.movimientovecinal.TransporteSeguro;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -54,13 +56,15 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.content.Intent.getIntent;
+import static android.content.Intent.getIntentOld;
 import static mx.oax.movimientovecinal.Shake.App.CHANNEL_ID;
 
 public class Service911TS extends Service implements SensorEventListener {
 
     public Service911TS(Context applicationContext) {
         super();
-        Log.i("HERE", "HERE I AM!");
+        Log.i("HERE", "HERE I AM SERVICE911TS!");
     }
 
     /**********VARIABLES PARA EL SHAKE***************/
@@ -88,7 +92,7 @@ public class Service911TS extends Service implements SensorEventListener {
     String mensaje1, mensaje2, direccion, municipio, estado;
     String valorRandom,codigoVerifi,randomCodigoVerifi,fecha,hora;
     Double lat, lon;
-    int numberRandom,cargarInfoWtransporteMW;
+    int numberRandom,cargarInfoWtransporteMW,cargarInfoValorWidget;
     String cargarInfoTelefono,cargarInfoNombre,cargarInfoApaterno,cargarInfoAmaterno,cargarInfoPlaca,cargarInfoDireccion,cargarInfoMunicipio,cargarInfoEstado,cargarInfoLat,cargarInfoLong;
 
     /************GUARDAR PREFERENCIAS DEL SISTEMA***************/
@@ -123,7 +127,7 @@ public class Service911TS extends Service implements SensorEventListener {
                 SensorManager.SENSOR_DELAY_UI, new Handler());
         //startForeground();
 
-        Intent notificationIntent = new Intent(this, ConfiguracionesAgitado.class);
+        Intent notificationIntent = new Intent(this, TransporteSeguro.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 
@@ -223,16 +227,6 @@ public class Service911TS extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         cargar();
-        if(cargarInfoPlaca != "SIN INFORMACION" || cargarInfoWtransporteMW != 0){
-            if(bandera == 2){
-                insertBdEventoTransportePublicoRobosIOS();
-            }else{
-                Random();
-                insertBdEventoTransportePublicoIOS();
-                Toast.makeText(getApplicationContext(), "EMERGENCIA ENVIADA", Toast.LENGTH_SHORT).show();
-            }
-        }
-
 /*        version = cargarInfoSDK;
         float x = event.values[0];
         float y = event.values[1];
@@ -444,6 +438,7 @@ public class Service911TS extends Service implements SensorEventListener {
     //**************** INSERTA A LA TABLA DE ROBOS CON LAS COORDENADAS EN TIEMPO REAL *****************//
     public void insertBdEventoTransportePublicoRobosIOS() {
         cargar();
+        valorRandom = "OAX2021"+ randomCodigoVerifi;
         //*************** FECHA **********************//
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -571,6 +566,7 @@ public class Service911TS extends Service implements SensorEventListener {
         cargarInfoLat = shared.getString("LATITUDE","SIN INFORMACION");
         cargarInfoLong = shared.getString("LONGITUDE","SIN INFORMACION");
         cargarInfoWtransporteMW = shared.getInt("WTRANSPORTE", 0);
+        cargarInfoValorWidget = shared.getInt("OPRIMIR", 0);
     }
 
     private void eliminarServicio(){

@@ -37,17 +37,19 @@ import mx.oax.movimientovecinal.ui.transporte.transporte;
 public class MiWidget extends AppWidgetProvider {
     SharedPreferences share;
     SharedPreferences.Editor editor;
-    int cargarInfoViolenciaWidget,cargarInfoTransporteWidget,wTransporte,wViolencia,cargarInfoWtransporte,cargarInfoWviolencia;
+    int cargarInfoViolenciaWidget,cargarInfoTransporteWidget,wTransporte,wViolencia,cargarInfoWtransporte,cargarInfoWviolencia,valorWidget;
     String cargarInfoPlacaTransporte;
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
+
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
+        System.out.println("SE CREA EL HILO POR PRIMERA VEZ");
         share = context.getSharedPreferences("main", Context.MODE_PRIVATE);
         cargarInfoTransporteWidget = share.getInt("TRANSPORTE", 0);
         cargarInfoViolenciaWidget= share.getInt("VIOLENCIA", 0);
@@ -59,7 +61,8 @@ public class MiWidget extends AppWidgetProvider {
                     int appWidgetId = appWidgetIds[i];
                     System.out.println(cargarInfoTransporteWidget);
                     Intent intent = new Intent(context, TransporteSeguro.class);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                    //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.mi_widget);
                     views.setOnClickPendingIntent(R.id.imagen_widget, pendingIntent);
                     if (transporte.num_imag_transporte == 0) {
@@ -80,7 +83,8 @@ public class MiWidget extends AppWidgetProvider {
                     int appWidgetId = appWidgetIds[i];
                     System.out.println(cargarInfoViolenciaWidget);
                     Intent intent = new Intent(context, AltoALaViolencia.class);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                    //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.mi_widget);
                     views.setOnClickPendingIntent(R.id.imagen_widget, pendingIntent);
                     if (SlideshowFragment.num_imag_violencia == 0) {
@@ -96,6 +100,12 @@ public class MiWidget extends AppWidgetProvider {
                 }
             }
         }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        System.out.println("SE EJECUTA AL HACER CLICK");
+    }
 
     @Override
     public void onEnabled(Context context) {

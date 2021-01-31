@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -39,6 +40,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'//**********CONSUMIR SERVICIOS WEB
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.8' //*******GIF
     implementation 'me.biubiubiu.justifytext:library:1.1'//******** TEXTO JUSTIFICADO
-    implementation 'com.github.denzcoskun:ImageSlideshow:0.1.0'
+    implementation 'com.github.denzcoskun:ImageSlideshow:0.1.0' //******CARRUSEL DE IMAGENES
+    implementation platform('com.google.firebase:firebase-bom:26.4.0') //***COMPLEMENTOS DE FIREBASE
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging'
+
 
 }
