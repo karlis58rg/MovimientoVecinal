@@ -175,10 +175,14 @@ public class AlertaAmber extends AppCompatActivity {
 
     //********************************** SE CONVIERTE LA IMAGEN A BASE64 Y SE ENVIA AL SERVIDOR ***********************************//
     private void llamarItemAvatar() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+       /* Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
+        }*/
+        Intent takePictureIntent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        takePictureIntent.setType("image/");
+        startActivityForResult(takePictureIntent.createChooser(takePictureIntent,"Selecciona la imagen"),REQUEST_IMAGE_CAPTURE);
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
